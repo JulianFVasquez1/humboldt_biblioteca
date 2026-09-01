@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Busca libros disponibles en la Biblioteca del Colegio Humboldt por título, autor, ISBN o categoría y encuentra rápidamente su ubicación.">
+    <title>Biblioteca Colegio Humboldt — Buscador de Libros</title>
+
+    <!-- Google Fonts: Hanken Grotesk + Inter (Stitch Design System) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Material Symbols (Stitch icons) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header" id="inicio">
+        <div class="header__container">
+            <!-- Logo e identidad -->
+            <div class="header__brand">
+                <a href="#inicio" aria-label="Ir al inicio — Biblioteca Colegio Humboldt">
+                    <img src="images/logo_bgn.png" alt="Biblioteca Humboldt" class="header__logo-img">
+                </a>
+            </div>
+
+            <!-- Navegación principal -->
+            <nav class="header__nav" aria-label="Navegación principal">
+                <a href="#inicio" class="nav__link" id="nav-inicio">Inicio</a>
+                <a href="#catalogo" class="nav__link" id="nav-catalogo">Catálogo</a>
+                <a href="#informacion" class="nav__link" id="nav-informacion">Información</a>
+            </nav>
+
+            <!-- Botón hamburguesa (móvil) -->
+            <button class="header__menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+        </div>
+
+        <!-- Menú móvil desplegable -->
+        <nav class="header__nav-mobile" id="mobileMenu" aria-label="Menú móvil">
+            <a href="#inicio" class="nav__link" id="nav-inicio-mobile">Inicio</a>
+            <a href="#catalogo" class="nav__link" id="nav-catalogo-mobile">Catálogo</a>
+            <a href="#informacion" class="nav__link" id="nav-informacion-mobile">Información</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- ===== HERO ===== -->
+        <section class="hero" aria-labelledby="hero-titulo">
+            <div class="hero__container">
+                <div class="hero__badge"> 
+                    <svg class="hero__badge-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 8C4 5.17157 4 3.75736 4.87868 2.87868C5.75736 2 7.17157 2 10 2H14C16.8284 2 18.2426 2 19.1213 2.87868C20 3.75736 20 5.17157 20 8V16C20 18.8284 20 20.2426 19.1213 21.1213C18.2426 22 16.8284 22 14 22H10C7.17157 22 5.75736 22 4.87868 21.1213C4 20.2426 4 18.8284 4 16V8Z" stroke="currentColor" stroke-width="1.5"></path>
+                        <path d="M19.8978 16H7.89778C6.96781 16 6.50282 16 6.12132 16.1022C5.08604 16.3796 4.2774 17.1883 4 18.2235" stroke="currentColor" stroke-width="1.5"></path>
+                        <path opacity="0.5" d="M8 7H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                        <path opacity="0.5" d="M8 10.5H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                        <path opacity="0.5" d="M13 16V19.5309C13 19.8065 13 19.9443 12.9051 20C12.8103 20.0557 12.6806 19.9941 12.4211 19.8708L11.1789 19.2808C11.0911 19.2391 11.0472 19.2182 11 19.2182C10.9528 19.2182 10.9089 19.2391 10.8211 19.2808L9.57889 19.8708C9.31943 19.9941 9.18971 20.0557 9.09485 20C9 19.9443 9 19.8065 9 19.5309V16.45" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </svg>
+                    <span>Catálogo Digital</span>
+                </div>
+                <h1 class="hero__titulo" id="hero-titulo">Encuentra tu próximo libro</h1>
+                <p class="hero__descripcion">
+                    Busca libros por título, autor, ISBN o categoría y encuentra rápidamente dónde están ubicados en
+                    nuestra biblioteca.
+                </p>
+
+                <!-- Buscador principal -->
+                <div class="buscador" role="search">
+                    <div class="buscador__campo-wrapper">
+                        <span class="buscador__icono" aria-hidden="true">
+                            <svg viewBox="0 0 50 50" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.745,32.62c2.883,0,5.606-1.022,7.773-2.881L39.052,40.3c0.195,0.196,0.452,0.294,0.708,0.294 c0.255,0,0.511-0.097,0.706-0.292c0.391-0.39,0.392-1.023,0.002-1.414L29.925,28.319c3.947-4.714,3.717-11.773-0.705-16.205 c-2.264-2.27-5.274-3.52-8.476-3.52s-6.212,1.25-8.476,3.52c-4.671,4.683-4.671,12.304,0,16.987 C14.533,31.37,17.543,32.62,20.745,32.62z M13.685,13.526c1.886-1.891,4.393-2.932,7.06-2.932s5.174,1.041,7.06,2.932 c3.895,3.905,3.895,10.258,0,14.163c-1.886,1.891-4.393,2.932-7.06,2.932s-5.174-1.041-7.06-2.932 C9.791,23.784,9.791,17.431,13.685,13.526z"></path>
+                            </svg>
+                        </span>
+                        <input type="text" id="campoBusqueda" class="buscador__input"
+                            placeholder="Buscar por título, autor o ISBN..." aria-label="Buscar libros"
+                            autocomplete="off">
+                        <button class="buscador__limpiar" id="btnLimpiar" aria-label="Limpiar búsqueda"
+                            title="Limpiar búsqueda" style="display: none;">✕</button>
+                    </div>
+                    <button class="btn btn--primario" id="btnBuscar">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ===== CHIPS DE CATEGORÍA (scroll horizontal, estilo Stitch) ===== -->
+        <div class="chips-seccion" id="chips" aria-label="Filtrar por categoría">
+            <div class="chips-scroll" role="list">
+                <button class="chip activo" id="chip-todos" onclick="filtrarPorChip('')" aria-label="Todos los libros">
+                    <span class="material-symbols-outlined">auto_stories</span>
+                    Todos
+                </button>
+                <button class="chip" id="chip-literatura" onclick="filtrarPorChip('Literatura')"
+                    aria-label="Literatura">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    Literatura
+                </button>
+                <button class="chip" id="chip-ciencias" onclick="filtrarPorChip('Ciencias')" aria-label="Ciencias">
+                    <span class="material-symbols-outlined">science</span>
+                    Ciencias
+                </button>
+                <button class="chip" id="chip-historia" onclick="filtrarPorChip('Historia')" aria-label="Historia">
+                    <span class="material-symbols-outlined">history_edu</span>
+                    Historia
+                </button>
+                <button class="chip" id="chip-matematicas" onclick="filtrarPorChip('Matemáticas')"
+                    aria-label="Matemáticas">
+                    <span class="material-symbols-outlined">calculate</span>
+                    Matemáticas
+                </button>
+                <button class="chip" id="chip-filosofia" onclick="filtrarPorChip('Filosofía')" aria-label="Filosofía">
+                    <span class="material-symbols-outlined">psychology</span>
+                    Filosofía
+                </button>
+                <button class="chip" id="chip-arte" onclick="filtrarPorChip('Arte')" aria-label="Arte">
+                    <span class="material-symbols-outlined">palette</span>
+                    Arte
+                </button>
+                <button class="chip" id="chip-tecnologia" onclick="filtrarPorChip('Tecnología')"
+                    aria-label="Tecnología">
+                    <span class="material-symbols-outlined">computer</span>
+                    Tecnología
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== CATÁLOGO ===== -->
+        <section class="catalogo-seccion" id="catalogo" aria-labelledby="catalogo-titulo">
+            <div class="catalogo-seccion__container">
+
+                <!-- Filtros -->
+                <div class="filtros" role="group" aria-label="Filtros de búsqueda">
+                    <div class="filtros__grupo">
+                        <label class="filtros__label" for="filtroCategoria">Categoría</label>
+                        <select class="filtros__select" id="filtroCategoria" aria-label="Filtrar por categoría">
+                            <option value="">Todas las categorías</option>
+                        </select>
+                    </div>
+
+                    <div class="filtros__grupo">
+                        <label class="filtros__label" for="filtroAutor">Autor</label>
+                        <select class="filtros__select" id="filtroAutor" aria-label="Filtrar por autor">
+                            <option value="">Todos los autores</option>
+                        </select>
+                    </div>
+
+                    <div class="filtros__grupo">
+                        <label class="filtros__label" for="filtroEstado">Estado</label>
+                        <select class="filtros__select" id="filtroEstado" aria-label="Filtrar por estado">
+                            <option value="">Todos los estados</option>
+                            <option value="Disponible">🟢 Disponible</option>
+                            <option value="Prestado">🔴 Prestado</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn--secundario" id="btnTodos" aria-label="Mostrar todos los libros">
+                        Todos los libros
+                    </button>
+                </div>
+
+                <!-- Encabezado de resultados -->
+                <div class="catalogo__encabezado">
+                    <h2 class="catalogo__titulo" id="catalogo-titulo">Catálogo de libros</h2>
+                    <span class="catalogo__contador" id="contadorResultados" aria-live="polite">
+                        18 libros encontrados
+                    </span>
+                </div>
+
+                <!-- Grid de tarjetas de libros -->
+                <div class="libros-grid" id="librosGrid" role="list" aria-label="Lista de libros">
+                    <!-- Las tarjetas se generan con JavaScript -->
+                </div>
+
+                <!-- Estado sin resultados -->
+                <div class="sin-resultados" id="sinResultados" role="status" aria-live="polite" style="display: none;">
+                    <div class="sin-resultados__icono" aria-hidden="true">📭</div>
+                    <h3 class="sin-resultados__titulo">No encontramos libros</h3>
+                    <p class="sin-resultados__texto">
+                        Intenta buscar por otro título, autor o categoría.
+                    </p>
+                    <button class="btn btn--primario" id="btnVerTodos">
+                        Ver todos los libros
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===== INFORMACIÓN ===== -->
+        <section class="informacion" id="informacion" aria-labelledby="info-titulo">
+            <div class="informacion__container">
+                <h2 class="informacion__titulo" id="info-titulo">Biblioteca Colegio Humboldt</h2>
+                <p class="informacion__descripcion">
+                    Un espacio para aprender, investigar y descubrir nuevas historias.
+                </p>
+
+                <div class="informacion__cards">
+
+                    <div class="info-card">
+                        <div class="info-card__icono" aria-hidden="true">🕐</div>
+                        <h3 class="info-card__titulo">Horario de atención</h3>
+                        <p class="info-card__texto">Lunes a viernes</p>
+                        <p class="info-card__detalle">7:00 AM — 4:00 PM</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card__icono" aria-hidden="true">📍</div>
+                        <h3 class="info-card__titulo">Ubicación</h3>
+                        <p class="info-card__texto">Biblioteca principal</p>
+                        <p class="info-card__detalle">Planta baja — Ala norte</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card__icono" aria-hidden="true">🎓</div>
+                        <h3 class="info-card__titulo">Atención a</h3>
+                        <p class="info-card__texto">Estudiantes y docentes</p>
+                        <p class="info-card__detalle">Colegio Humboldt</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card__icono" aria-hidden="true">📞</div>
+                        <h3 class="info-card__titulo">Contacto</h3>
+                        <p class="info-card__texto">biblioteca@humboldt.edu</p>
+                        <p class="info-card__detalle">Ext. 201</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer__container">
+            <div class="footer__brand">
+                <img src="images/logo_bgn.png" alt="Biblioteca Humboldt" class="footer__brand-logo">
+            </div>
+            <p class="footer__texto">Sistema de búsqueda de libros — Catálogo digital -Colegio Humboldt</p>
+        </div>
+    </footer>
+
+    <!-- ===== MODAL DE UBICACIÓN ===== -->
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitulo"
+        style="display: none;">
+        <div class="modal">
+            <button class="modal__cerrar" id="modalCerrar" aria-label="Cerrar">✕</button>
+            <div class="modal__icono" aria-hidden="true">🗺️</div>
+            <h3 class="modal__titulo" id="modalTitulo">Ubicación del libro</h3>
+            <p class="modal__libro-nombre" id="modalLibroNombre"></p>
+
+            <div class="modal__ubicacion" id="modalUbicacion">
+                <!-- Se rellena con JavaScript -->
+            </div>
+
+            <button class="btn btn--primario modal__btn-cerrar" id="modalBtnCerrar">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== BOTTOM NAV (móvil, estilo Stitch) ===== -->
+    <nav class="bottom-nav" aria-label="Navegación móvil">
+        <a href="#inicio" class="bottom-nav__item activo" id="bnav-inicio">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+            <span class="bottom-nav__label">Inicio</span>
+        </a>
+        <a href="#catalogo" class="bottom-nav__item" id="bnav-catalogo">
+            <span class="material-symbols-outlined">search</span>
+            <span class="bottom-nav__label">Buscar</span>
+        </a>
+        <a href="#informacion" class="bottom-nav__item" id="bnav-informacion">
+            <span class="material-symbols-outlined">info</span>
+            <span class="bottom-nav__label">Info</span>
+        </a>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
