@@ -241,12 +241,20 @@ img { max-width: 100%; display: block; }
 .btn--ubicacion {
     background: var(--primary);
     color: var(--on-primary);
-    padding: 8px 16px;
+    padding: 8px 14px;
     font-size: var(--text-label-sm);
+    font-weight: 600;
     border-radius: var(--radius-md);
     width: 100%;
     margin-top: auto;
     transition: var(--transition);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+    cursor: pointer;
+    border: none;
 }
 .btn--ubicacion:hover {
     background: var(--primary-container);
@@ -501,16 +509,17 @@ img { max-width: 100%; display: block; }
 .buscador__limpiar:hover { background: var(--surface-container-high); color: var(--on-surface); }
 
 /* ============================================================
-   CHIPS DE CATEGORÍA (Centrado y organizado)
+   CHIPS DE CATEGORÍA (Carrusel scroll horizontal en móvil/tablet)
    ============================================================ */
 .chips-seccion {
     width: 100%;
-    padding: var(--stack-md) var(--container-margin);
+    padding: var(--stack-md) 0;
     border-top: 1px solid rgba(119,118,131,0.15);
     border-bottom: 1px solid rgba(119,118,131,0.15);
     background: var(--surface);
     display: flex;
     justify-content: center;
+    position: relative;
 }
 
 .chips-scroll {
@@ -519,15 +528,16 @@ img { max-width: 100%; display: block; }
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 4px 0;
+    padding: 4px var(--container-margin);
+    width: 100%;
 }
 .chips-scroll::-webkit-scrollbar { display: none; }
 
 .chip {
     flex-shrink: 0;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     background: var(--surface-container-lowest);
@@ -542,6 +552,7 @@ img { max-width: 100%; display: block; }
     transition: var(--transition);
     cursor: pointer;
     white-space: nowrap;
+    user-select: none;
 }
 .chip:hover, .chip.activo {
     border-color: rgba(4, 0, 97, 0.4);
@@ -728,49 +739,112 @@ img { max-width: 100%; display: block; }
     transform: scale(1.04);
 }
 
-/* Badge de estado — estilo pill con fondo semitransparente */
-.libro-card__estado-badge {
+/* ============================================================
+   RIBBON BANNER DE ESTADO 3D (Esquina superior derecha)
+   ============================================================ */
+.card-ribbon {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 6px;
+    z-index: 5;
+    display: inline-flex;
+    align-items: stretch;
+    height: 24px;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+    pointer-events: none;
+    user-select: none;
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.libro-card:hover .card-ribbon {
+    transform: translateY(-1px) scale(1.02);
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.45));
+}
+
+/* 1. Cola con muesca / notch a la izquierda */
+.card-ribbon__tail {
+    width: 14px;
+    height: 100%;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%, 7px 50%, 0 0);
+    flex-shrink: 0;
+}
+
+/* 2. Pliegue oscuro / sombra 3D intermedia */
+.card-ribbon__fold {
+    width: 6px;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+/* 3. Cuerpo principal con punta de flecha a la derecha */
+.card-ribbon__body {
+    height: 100%;
+    padding: 0 13px 0 7px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: var(--radius-full);
-    font-size: var(--text-label-sm);
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    backdrop-filter: blur(4px);
+    color: #ffffff;
+    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    font-family: var(--font-body);
 }
 
-.estado--disponible {
-    background: rgba(34, 197, 94, 0.12);
-    border: 1px solid rgba(34, 197, 94, 0.25);
-    color: #15803d;
+/* ── Variante ROJA (No disponible / Agotado) ── */
+.card-ribbon--rojo .card-ribbon__tail {
+    background: linear-gradient(135deg, #d31010 0%, #b30000 100%);
 }
-.estado--disponible::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #16a34a;
-    display: inline-block;
+.card-ribbon--rojo .card-ribbon__fold {
+    background: linear-gradient(to right, #6b0000, #8a0000);
+}
+.card-ribbon--rojo .card-ribbon__body {
+    background: linear-gradient(180deg, #ef2d2d 0%, #d81212 48%, #af0000 100%);
 }
 
-.estado--prestado {
-    background: rgba(186, 26, 26, 0.10);
-    border: 1px solid rgba(186, 26, 26, 0.20);
-    color: var(--error);
+/* ── Variante VERDE (Disponible) ── */
+.card-ribbon--verde .card-ribbon__tail {
+    background: linear-gradient(135deg, #64be1a 0%, #4a940d 100%);
 }
-.estado--prestado::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--error);
-    display: inline-block;
+.card-ribbon--verde .card-ribbon__fold {
+    background: linear-gradient(to right, #255804, #347207);
+}
+.card-ribbon--verde .card-ribbon__body {
+    background: linear-gradient(180deg, #7ad525 0%, #63bd18 48%, #478e0a 100%);
+}
+
+/* ── Variante AMARILLA (Pocas unidades) ── */
+.card-ribbon--amarillo .card-ribbon__tail {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+.card-ribbon--amarillo .card-ribbon__fold {
+    background: linear-gradient(to right, #78350f, #92400e);
+}
+.card-ribbon--amarillo .card-ribbon__body {
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 48%, #d97706 100%);
+    color: #ffffff;
+}
+
+@media (max-width: 480px) {
+    .card-ribbon {
+        height: 20px;
+        top: 6px;
+        right: 4px;
+    }
+    .card-ribbon__tail {
+        width: 11px;
+        clip-path: polygon(100% 0, 100% 100%, 0 100%, 5px 50%, 0 0);
+    }
+    .card-ribbon__fold {
+        width: 4px;
+    }
+    .card-ribbon__body {
+        font-size: 0.58rem;
+        padding: 0 10px 0 5px;
+        clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%);
+    }
 }
 
 /* Cuerpo de la tarjeta */
@@ -868,51 +942,17 @@ img { max-width: 100%; display: block; }
     border: 1px solid rgba(234, 179, 8, 0.3);
 }
 
-/* Controles de copias en modo Administrador */
-.admin-card-copias-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface-container-low);
-    border: 1px solid var(--outline-variant);
-    border-radius: var(--radius-sm);
-    padding: 4px 8px;
-    margin-top: 4px;
-}
-
-.admin-card-copias-label {
-    font-size: 0.7rem;
+/* Aviso de ejemplares agotados */
+.copias-agotadas-aviso {
+    font-size: 0.76rem;
+    color: var(--error);
     font-weight: 600;
-    color: var(--on-surface-variant);
-}
-
-.admin-card-copias-btns {
-    display: flex;
-    gap: 4px;
-}
-
-.btn--copia-accion {
-    padding: 3px 7px;
-    font-size: 0.68rem;
-    font-weight: 700;
+    margin-top: auto;
+    text-align: center;
+    padding: 6px 8px;
+    background: rgba(186, 26, 26, 0.08);
     border-radius: var(--radius-sm);
-    border: 1px solid var(--outline-variant);
-    background: var(--surface-container-lowest);
-    color: var(--on-surface);
-    transition: var(--transition);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-}
-.btn--copia-accion:hover:not(:disabled) {
-    background: var(--primary);
-    color: var(--on-primary);
-    border-color: transparent;
-}
-.btn--copia-accion:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+    border: 1px solid rgba(186, 26, 26, 0.2);
 }
 
 .libro-card__acciones { margin-top: var(--stack-md); }
@@ -1230,20 +1270,81 @@ img { max-width: 100%; display: block; }
 }
 
 /* ============================================================
-   ADMIN CARD ACTIONS (En modo Admin)
+   ADMIN CARD ACTIONS (En modo Admin - Totalmente responsivo)
    ============================================================ */
 .admin-card-acciones {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-top: var(--stack-sm);
-    padding-top: var(--stack-sm);
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px dashed var(--outline-variant);
+    width: 100%;
+}
+
+.admin-card-copias-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--surface-container-low);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-card-copias-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--on-surface-variant);
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.admin-card-copias-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    width: 100%;
+}
+
+.btn--copia-accion {
+    padding: 5px 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--outline-variant);
+    background: var(--surface-container-lowest);
+    color: var(--on-surface);
+    transition: var(--transition);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.1;
+    font-family: var(--font-body);
+}
+
+.btn--copia-accion:hover:not(:disabled) {
+    background: var(--primary);
+    color: var(--on-primary);
+    border-color: transparent;
+}
+
+.btn--copia-accion:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: var(--surface-container-high);
 }
 
 .admin-card-btn-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 6px;
+    width: 100%;
 }
 
 .btn--admin-edit, .btn--admin-delete, .btn--admin-toggle {
@@ -1251,17 +1352,23 @@ img { max-width: 100%; display: block; }
     align-items: center;
     justify-content: center;
     gap: 4px;
-    padding: 6px 10px;
+    padding: 6px 6px;
     border-radius: var(--radius-sm);
     font-size: 0.72rem;
     font-weight: 600;
     transition: var(--transition);
     cursor: pointer;
     font-family: var(--font-body);
+    white-space: nowrap;
+    text-align: center;
+}
+
+.btn--admin-edit .material-symbols-outlined,
+.btn--admin-delete .material-symbols-outlined {
+    font-size: 15px;
 }
 
 .btn--admin-edit {
-    flex: 1;
     background: var(--surface-container-high);
     color: var(--primary);
     border: 1px solid var(--outline-variant);
@@ -1297,6 +1404,32 @@ img { max-width: 100%; display: block; }
    ============================================================ */
 .modal--admin-login {
     max-width: 380px;
+    width: 90%;
+    text-align: center;
+}
+
+.modal--admin-login .modal__titulo {
+    text-align: center;
+}
+
+.modal--admin-login .modal__libro-nombre {
+    text-align: center;
+    margin-bottom: var(--stack-md);
+}
+
+.modal--admin-login .form-admin {
+    text-align: left;
+}
+
+.modal--admin-login .modal__form-acciones {
+    justify-content: center;
+    gap: 12px;
+}
+
+.modal--admin-login .modal__form-acciones .btn {
+    flex: 1;
+    min-width: 110px;
+    justify-content: center;
 }
 
 .modal--form-libro {
@@ -1530,12 +1663,29 @@ img { max-width: 100%; display: block; }
     .libros-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ── Tablet: 3 columnas ── */
+/* ── Tablet (768px - 1023px): carrusel de chips + 3 columnas ── */
 @media (min-width: 768px) and (max-width: 1023px) {
     .libros-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .chips-seccion {
+        padding: 12px 0;
+    }
+    .chips-scroll {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 4px 20px;
+        gap: 8px;
+    }
+    .chip {
+        padding: 7px 16px;
+        font-size: 0.82rem;
+    }
 }
 
-/* ── Móvil: ocultar nav desktop, mostrar hamburguesa y bottom nav ── */
+/* ── Móvil: ocultar nav desktop, carrusel de chips, layout compacto ── */
 @media (max-width: 767px) {
     body { padding-bottom: 80px; }
 
@@ -1544,10 +1694,28 @@ img { max-width: 100%; display: block; }
 
     .bottom-nav { display: flex; }
 
-    .hero { padding: 32px var(--container-margin); }
+    .hero { padding: 28px var(--container-margin); }
 
     .buscador { flex-direction: column; }
     .buscador .btn--primario { width: 100%; border-radius: var(--radius-full); padding: 14px; }
+
+    /* Chips carrusel scroll horizontal táctil */
+    .chips-seccion {
+        padding: 10px 0;
+    }
+    .chips-scroll {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 4px 16px;
+        gap: 8px;
+    }
+    .chip {
+        padding: 7px 14px;
+        font-size: 0.8rem;
+    }
 
     .filtros { flex-direction: column; align-items: stretch; }
     .filtros__grupo { min-width: unset; }
@@ -1575,7 +1743,14 @@ img { max-width: 100%; display: block; }
 }
 
 @media (max-width: 480px) {
-    .libros-grid { grid-template-columns: repeat(2, 1fr); gap: var(--stack-sm); }
+    .libros-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .libro-card__cuerpo { padding: 10px 8px; gap: 3px; }
+    .libro-card__titulo { font-size: 0.85rem; }
+    .libro-card__autor { font-size: 0.72rem; }
+    .btn--ubicacion { padding: 7px 8px; font-size: 0.74rem; }
+    .admin-card-copias-label { font-size: 0.66rem; }
+    .btn--copia-accion { font-size: 0.64rem; padding: 4px 2px; }
+    .btn--admin-edit, .btn--admin-delete { font-size: 0.68rem; padding: 5px 2px; }
     .informacion__cards { grid-template-columns: 1fr; }
 }
 

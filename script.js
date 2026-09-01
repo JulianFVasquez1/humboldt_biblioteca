@@ -539,18 +539,26 @@ function crearTarjeta(libro, indice) {
     const dispCopias  = typeof libro.copiasDisponibles === 'number' ? libro.copiasDisponibles : (libro.estado === 'Disponible' ? 1 : 0);
     const hayDisponibilidad = dispCopias > 0;
 
-    // Estado para badge en portada
-    let claseEstadoBadge, textoEstadoBadge;
+    // Ribbon banner de estado en esquina superior derecha (Estilo 3D inspirado en cinta)
+    let ribbonTipo, ribbonTexto;
     if (dispCopias === 0) {
-        claseEstadoBadge = 'estado--prestado';
-        textoEstadoBadge = `🔴 0 de ${totalCopias} disp.`;
+        ribbonTipo = 'rojo';
+        ribbonTexto = 'No disponible';
     } else if (dispCopias === 1 && totalCopias > 1) {
-        claseEstadoBadge = 'estado--disponible';
-        textoEstadoBadge = `🟡 1 de ${totalCopias} disp.`;
+        ribbonTipo = 'amarillo';
+        ribbonTexto = 'Pocas unidades';
     } else {
-        claseEstadoBadge = 'estado--disponible';
-        textoEstadoBadge = `🟢 ${dispCopias} de ${totalCopias} disp.`;
+        ribbonTipo = 'verde';
+        ribbonTexto = 'Disponible';
     }
+
+    const ribbonHTML = `
+        <div class="card-ribbon card-ribbon--${ribbonTipo}" title="${ribbonTexto}">
+            <span class="card-ribbon__tail" aria-hidden="true"></span>
+            <span class="card-ribbon__fold" aria-hidden="true"></span>
+            <span class="card-ribbon__body">${ribbonTexto}</span>
+        </div>
+    `;
 
     const clasePortion = obtenerClasePortada(libro.categoria);
     const iniciales    = obtenerIniciales(libro.titulo);
@@ -584,7 +592,7 @@ function crearTarjeta(libro, indice) {
     const adminAccionesHTML = esAdmin ? `
         <div class="admin-card-acciones">
             <div class="admin-card-copias-controls">
-                <span class="admin-card-copias-label">Copias: ${dispCopias}/${totalCopias}</span>
+                <span class="admin-card-copias-label">Copias: ${dispCopias} / ${totalCopias}</span>
                 <div class="admin-card-copias-btns">
                     <button class="btn--copia-accion" onclick="prestarCopia(${libro.id})" title="Prestar una copia (-1 disponible)" ${dispCopias === 0 ? 'disabled' : ''}>
                         -1 Prestar
@@ -596,11 +604,11 @@ function crearTarjeta(libro, indice) {
             </div>
             <div class="admin-card-btn-group">
                 <button class="btn--admin-edit" onclick="abrirModalEditarLibro(${libro.id})" title="Editar libro">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+                    <span class="material-symbols-outlined">edit</span>
                     Editar
                 </button>
                 <button class="btn--admin-delete" onclick="abrirModalEliminarLibro(${libro.id})" title="Eliminar libro">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                    <span class="material-symbols-outlined">delete</span>
                     Eliminar
                 </button>
             </div>
@@ -610,9 +618,7 @@ function crearTarjeta(libro, indice) {
     card.innerHTML = `
         <div class="libro-card__portada ${libro.imagen ? 'portada--con-imagen' : clasePortion}">
             ${portadaHTML}
-            <span class="libro-card__estado-badge ${claseEstadoBadge}">
-                ${textoEstadoBadge}
-            </span>
+            ${ribbonHTML}
         </div>
 
         <div class="libro-card__cuerpo">
@@ -640,11 +646,11 @@ function crearTarjeta(libro, indice) {
                             class="btn btn--ubicacion"
                             id="btn-ubicacion-${libro.id}"
                             onclick="mostrarUbicacion(${libro.id})"
-                            aria-label="Ver ubicación de ${escaparHTML(libro.titulo)}"
+                            aria-label="Ver disponibilidad y ubicación de ${escaparHTML(libro.titulo)}"
                        >
-                           🗺️ Ver ubicación (${dispCopias} disp.)
+                           Disponibilidad
                        </button>`
-                    : `<p style="font-size:0.78rem; color:var(--error); font-weight:600; margin-top:auto; text-align:center;">
+                    : `<p class="copias-agotadas-aviso">
                            🔴 Todos los ejemplares (${totalCopias}) prestados
                        </p>`
                 }
