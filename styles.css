@@ -1,15 +1,9 @@
-/* ============================================================
-   BIBLIOTECA COLEGIO HUMBOLDT — styles.css
-   Design System aplicado desde Google Stitch
-   Fuentes: Hanken Grotesk (títulos) + Inter (cuerpo)
-   Paleta: Material You derivada del color institucional #1a1a80
-   ============================================================ */
+
 
 /* ── Google Fonts ──────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
-/* ── Variables (tokens de Stitch) ──────────────────────────── */
 :root {
     /* ── Superficie y fondo ── */
     --surface:                  #fcf8ff;
@@ -188,6 +182,60 @@ img { max-width: 100%; display: block; }
 }
 .btn--secundario:hover {
     background: var(--surface-container-low);
+}
+
+.btn--peligro {
+    background: transparent;
+    color: var(--error);
+    border: 1px solid var(--error-container);
+}
+.btn--peligro:hover {
+    background: var(--error-container);
+    color: var(--on-error-container);
+}
+
+.btn--admin-add {
+    background: var(--primary-container);
+    color: var(--on-primary);
+}
+.btn--admin-add:hover {
+    background: var(--primary);
+}
+
+.nav__admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-label-sm);
+    font-weight: var(--fw-label-md);
+    color: var(--primary);
+    border: 1px solid var(--outline-variant);
+    background: var(--surface-container-low);
+    transition: var(--transition);
+    cursor: pointer;
+    margin-left: 6px;
+}
+.nav__admin-btn:hover {
+    background: var(--primary-fixed);
+    border-color: var(--primary);
+}
+.nav__admin-btn.activo {
+    background: var(--primary-container);
+    color: var(--on-primary);
+    border-color: transparent;
+}
+.nav__admin-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.nav__link--admin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+    font-weight: 600;
 }
 
 .btn--ubicacion {
@@ -453,22 +501,27 @@ img { max-width: 100%; display: block; }
 .buscador__limpiar:hover { background: var(--surface-container-high); color: var(--on-surface); }
 
 /* ============================================================
-   CHIPS DE CATEGORÍA (scroll horizontal, estilo Stitch)
+   CHIPS DE CATEGORÍA (Centrado y organizado)
    ============================================================ */
 .chips-seccion {
     width: 100%;
-    padding: var(--stack-lg) var(--container-margin);
-    border-top: 1px solid rgba(119,118,131,0.2);
-    border-bottom: 1px solid rgba(119,118,131,0.2);
+    padding: var(--stack-md) var(--container-margin);
+    border-top: 1px solid rgba(119,118,131,0.15);
+    border-bottom: 1px solid rgba(119,118,131,0.15);
     background: var(--surface);
+    display: flex;
+    justify-content: center;
 }
 
 .chips-scroll {
     display: flex;
-    gap: var(--stack-md);
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4px 0;
 }
 .chips-scroll::-webkit-scrollbar { display: none; }
 
@@ -480,7 +533,7 @@ img { max-width: 100%; display: block; }
     background: var(--surface-container-lowest);
     border: 1px solid rgba(119,118,131,0.3);
     color: var(--on-surface);
-    padding: 10px 20px;
+    padding: 8px 18px;
     border-radius: var(--radius-full);
     font-size: var(--text-label-md);
     font-weight: var(--fw-label-md);
@@ -776,6 +829,92 @@ img { max-width: 100%; display: block; }
     font-family: monospace;
 }
 
+/* Indicador de copias y disponibilidad */
+.libro-card__copias-info {
+    margin-top: 6px;
+}
+
+.copias-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.2;
+    width: 100%;
+}
+
+.copias-badge .material-symbols-outlined {
+    font-size: 15px;
+}
+
+.copias--disponible {
+    background: rgba(34, 197, 94, 0.10);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.copias--agotado {
+    background: rgba(186, 26, 26, 0.10);
+    color: var(--error);
+    border: 1px solid rgba(186, 26, 26, 0.25);
+}
+
+.copias--pocas {
+    background: rgba(234, 179, 8, 0.12);
+    color: #a16207;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+/* Controles de copias en modo Administrador */
+.admin-card-copias-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-container-low);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    margin-top: 4px;
+}
+
+.admin-card-copias-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--on-surface-variant);
+}
+
+.admin-card-copias-btns {
+    display: flex;
+    gap: 4px;
+}
+
+.btn--copia-accion {
+    padding: 3px 7px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--outline-variant);
+    background: var(--surface-container-lowest);
+    color: var(--on-surface);
+    transition: var(--transition);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.btn--copia-accion:hover:not(:disabled) {
+    background: var(--primary);
+    color: var(--on-primary);
+    border-color: transparent;
+}
+.btn--copia-accion:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 .libro-card__acciones { margin-top: var(--stack-md); }
 
 /* ============================================================
@@ -833,12 +972,24 @@ img { max-width: 100%; display: block; }
     padding: var(--stack-lg);
     transition: var(--transition);
 }
-.info-card:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
-.info-card__icono { font-size: 2rem; margin-bottom: var(--stack-sm); }
+.info-card__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--stack-sm);
+    height: 44px;
+}
+
+.info-card__svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+}
+
 .info-card__titulo {
     font-size: var(--text-label-sm);
     font-weight: var(--fw-label-md);
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.7);
     text-transform: uppercase;
     letter-spacing: var(--ls-label-md);
     margin-bottom: var(--stack-sm);
@@ -1000,6 +1151,377 @@ img { max-width: 100%; display: block; }
 .bottom-nav__label { font-size: var(--text-label-sm); font-weight: var(--fw-label-sm); }
 
 /* ============================================================
+   ADMIN TOOLBAR & PANEL
+   ============================================================ */
+.admin-toolbar {
+    background: linear-gradient(135deg, #1a1a80 0%, #040061 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--stack-md) var(--stack-lg);
+    color: var(--on-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--stack-md);
+    margin-bottom: var(--stack-lg);
+    box-shadow: 0 8px 24px rgba(4, 0, 97, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    animation: fadeIn 0.3s ease;
+}
+
+.admin-toolbar__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-size: var(--text-label-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    width: fit-content;
+}
+
+.admin-badge .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.admin-toolbar__texto {
+    font-size: var(--text-body-sm);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-toolbar__acciones {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--stack-sm);
+}
+
+.admin-toolbar__acciones .btn {
+    padding: 8px 18px;
+    font-size: var(--text-label-sm);
+}
+
+.admin-toolbar__acciones .btn--secundario {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+.admin-toolbar__acciones .btn--secundario:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffffff;
+}
+
+.admin-toolbar__acciones .btn--peligro {
+    color: #ffdad6;
+    border-color: rgba(255, 218, 214, 0.3);
+}
+.admin-toolbar__acciones .btn--peligro:hover {
+    background: rgba(186, 26, 26, 0.4);
+    color: #ffffff;
+}
+
+/* ============================================================
+   ADMIN CARD ACTIONS (En modo Admin)
+   ============================================================ */
+.admin-card-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: var(--stack-sm);
+    padding-top: var(--stack-sm);
+    border-top: 1px dashed var(--outline-variant);
+}
+
+.admin-card-btn-group {
+    display: flex;
+    gap: 6px;
+}
+
+.btn--admin-edit, .btn--admin-delete, .btn--admin-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.72rem;
+    font-weight: 600;
+    transition: var(--transition);
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.btn--admin-edit {
+    flex: 1;
+    background: var(--surface-container-high);
+    color: var(--primary);
+    border: 1px solid var(--outline-variant);
+}
+.btn--admin-edit:hover {
+    background: var(--primary-fixed);
+    border-color: var(--primary);
+}
+
+.btn--admin-delete {
+    background: rgba(186, 26, 26, 0.08);
+    color: var(--error);
+    border: 1px solid rgba(186, 26, 26, 0.2);
+}
+.btn--admin-delete:hover {
+    background: var(--error);
+    color: #ffffff;
+}
+
+.btn--admin-toggle {
+    width: 100%;
+    background: var(--surface-container-low);
+    color: var(--on-surface-variant);
+    border: 1px solid var(--outline-variant);
+}
+.btn--admin-toggle:hover {
+    background: var(--surface-container-highest);
+    color: var(--on-surface);
+}
+
+/* ============================================================
+   MODALES DE FORMULARIO ADMIN
+   ============================================================ */
+.modal--admin-login {
+    max-width: 380px;
+}
+
+.modal--form-libro {
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.modal--eliminar {
+    max-width: 480px;
+    width: 90%;
+    padding: 32px 28px 28px;
+    text-align: center;
+}
+
+.modal--eliminar .modal__titulo {
+    margin-top: 4px;
+    font-size: 1.25rem;
+}
+
+.modal--eliminar .modal__libro-nombre {
+    margin-bottom: var(--stack-md);
+    line-height: 1.45;
+}
+
+.modal--eliminar .modal__form-acciones {
+    justify-content: center;
+    gap: 12px;
+    margin-top: var(--stack-md);
+    padding-top: var(--stack-md);
+}
+
+.modal--eliminar .btn {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    flex: 1 1 140px;
+}
+
+.modal__header-form {
+    display: flex;
+    align-items: center;
+    gap: var(--stack-md);
+    margin-bottom: var(--stack-lg);
+    padding-bottom: var(--stack-sm);
+    border-bottom: 1px solid var(--outline-variant);
+}
+
+.modal__header-icono {
+    font-size: 2.2rem;
+    color: var(--primary);
+    background: var(--primary-fixed);
+    padding: 10px;
+    border-radius: var(--radius-lg);
+}
+
+.modal__icono--peligro {
+    margin-bottom: var(--stack-sm);
+}
+
+/* Formularios */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--stack-md);
+    margin-bottom: var(--stack-lg);
+}
+
+.form-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-grupo--full {
+    grid-column: 1 / -1;
+}
+
+.form-seccion-titulo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-headline);
+    font-size: var(--text-headline-sm);
+    font-weight: 700;
+    color: var(--primary);
+    padding-top: var(--stack-sm);
+    border-top: 1px solid var(--outline-variant);
+    margin-top: 4px;
+}
+.form-seccion-titulo .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.form-label {
+    font-size: var(--text-label-sm);
+    font-weight: var(--fw-label-md);
+    color: var(--on-surface-variant);
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-body-sm);
+    color: var(--on-surface);
+    background: var(--surface-container-low);
+    transition: var(--transition);
+}
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--surface-container-lowest);
+    box-shadow: 0 0 0 3px rgba(4, 0, 97, 0.1);
+}
+
+.form-hint {
+    font-size: 0.7rem;
+    color: var(--outline);
+}
+
+.form-error {
+    background: var(--error-container);
+    color: var(--on-error-container);
+    font-size: var(--text-body-sm);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    margin-top: var(--stack-sm);
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper .form-input {
+    padding-right: 42px;
+}
+
+.btn-toggle-pwd {
+    position: absolute;
+    right: 8px;
+    color: var(--outline);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+.btn-toggle-pwd:hover {
+    color: var(--primary);
+}
+
+.modal__form-acciones {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: var(--stack-lg);
+    padding-top: var(--stack-md);
+    border-top: 1px solid var(--outline-variant);
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* ============================================================
+   NOTIFICACIONES TOAST
+   ============================================================ */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.toast {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--inverse-surface);
+    color: var(--inverse-on-surface);
+    padding: 12px 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    pointer-events: auto;
+    animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1), toastOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) 3.7s forwards;
+}
+
+.toast--success {
+    border-left: 4px solid #16a34a;
+}
+.toast--success .material-symbols-outlined { color: #4ade80; }
+
+.toast--error {
+    border-left: 4px solid var(--error);
+}
+.toast--error .material-symbols-outlined { color: #ff897d; }
+
+.toast--info {
+    border-left: 4px solid var(--primary-container);
+}
+.toast--info .material-symbols-outlined { color: var(--on-primary-container); }
+
+@keyframes toastIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes toastOut {
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(20px); opacity: 0; }
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 
@@ -1031,15 +1553,29 @@ img { max-width: 100%; display: block; }
     .filtros__grupo { min-width: unset; }
     .filtros .btn--secundario { width: 100%; }
 
+    .admin-toolbar { flex-direction: column; align-items: stretch; }
+    .admin-toolbar__acciones { flex-direction: column; }
+    .admin-toolbar__acciones .btn { width: 100%; }
+
+    .form-grid { grid-template-columns: 1fr; }
+
     .informacion__cards { grid-template-columns: repeat(2, 1fr); }
     .footer__container { flex-direction: column; text-align: center; }
 
     .catalogo__encabezado { flex-direction: column; align-items: flex-start; }
 
     .header__subtitle { display: none; }
+
+    .toast-container {
+        left: 16px;
+        right: 16px;
+        bottom: 90px;
+    }
+    .toast { width: 100%; }
 }
 
 @media (max-width: 480px) {
     .libros-grid { grid-template-columns: repeat(2, 1fr); gap: var(--stack-sm); }
     .informacion__cards { grid-template-columns: 1fr; }
 }
+

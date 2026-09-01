@@ -38,6 +38,10 @@
                 <a href="#inicio" class="nav__link" id="nav-inicio">Inicio</a>
                 <a href="#catalogo" class="nav__link" id="nav-catalogo">Catálogo</a>
                 <a href="#informacion" class="nav__link" id="nav-informacion">Información</a>
+                <button class="nav__admin-btn" id="btnAdminAuth" aria-label="Acceso Administrador" title="Acceso Administrador">
+                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                    <span id="btnAdminAuthText">Admin</span>
+                </button>
             </nav>
 
             <!-- Botón hamburguesa (móvil) -->
@@ -53,6 +57,10 @@
             <a href="#inicio" class="nav__link" id="nav-inicio-mobile">Inicio</a>
             <a href="#catalogo" class="nav__link" id="nav-catalogo-mobile">Catálogo</a>
             <a href="#informacion" class="nav__link" id="nav-informacion-mobile">Información</a>
+            <button class="nav__link nav__link--admin" id="btnAdminAuthMobile">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <span id="btnAdminAuthMobileText">Modo Administrador</span>
+            </button>
         </nav>
     </header>
 
@@ -144,6 +152,31 @@
         <section class="catalogo-seccion" id="catalogo" aria-labelledby="catalogo-titulo">
             <div class="catalogo-seccion__container">
 
+                <!-- Barra de herramientas de Administrador (visible solo para admin) -->
+                <div class="admin-toolbar" id="adminToolbar" style="display: none;" role="region" aria-label="Panel de Administrador">
+                    <div class="admin-toolbar__info">
+                        <div class="admin-badge">
+                            <span class="material-symbols-outlined">admin_panel_settings</span>
+                            <span>Modo Administrador</span>
+                        </div>
+                        <p class="admin-toolbar__texto">Gestión y control del inventario bibliotecario</p>
+                    </div>
+                    <div class="admin-toolbar__acciones">
+                        <button class="btn btn--primario btn--admin-add" id="btnNuevoLibro">
+                            <span class="material-symbols-outlined">add_circle</span>
+                            Nuevo Libro
+                        </button>
+                        <button class="btn btn--secundario btn--admin-reset" id="btnRestablecerCatalogo" title="Restablecer los 18 libros iniciales">
+                            <span class="material-symbols-outlined">restart_alt</span>
+                            Restablecer
+                        </button>
+                        <button class="btn btn--peligro" id="btnCerrarSesionAdmin" title="Cerrar sesión de administrador">
+                            <span class="material-symbols-outlined">logout</span>
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Filtros -->
                 <div class="filtros" role="group" aria-label="Filtros de búsqueda">
                     <div class="filtros__grupo">
@@ -213,28 +246,61 @@
                 <div class="informacion__cards">
 
                     <div class="info-card">
-                        <div class="info-card__icono" aria-hidden="true">🕐</div>
+                        <div class="info-card__icono" aria-hidden="true">
+                            <svg class="info-card__svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 8V12L14.5 14.5" stroke="#80D6FA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" stroke="#80D6FA" stroke-width="1.5"></path>
+                            </svg>
+                        </div>
                         <h3 class="info-card__titulo">Horario de atención</h3>
                         <p class="info-card__texto">Lunes a viernes</p>
                         <p class="info-card__detalle">7:00 AM — 4:00 PM</p>
                     </div>
 
                     <div class="info-card">
-                        <div class="info-card__icono" aria-hidden="true">📍</div>
+                        <div class="info-card__icono" aria-hidden="true">
+                            <svg class="info-card__svg" viewBox="-275 367 60 60" xmlns="http://www.w3.org/2000/svg">
+                                <g id="Travel">
+                                    <g id="location-map">
+                                        <g id="fill" transform="translate(1.000000, 1.000000)">
+                                            <path id="Fill-3" fill="#80D6FA" d="M-223,413c3.3,0,6,2.7,6,6s-2.7,6-6,6h-46c-3.3,0-6-2.7-6-6s2.7-6,6-6h20.4l0,0l2.6,4l2.6-4 H-223z"></path>
+                                            <path id="Combined-Shape" fill="#AAB1BA" d="M-217,409v10c0-3.3-2.7-6-6-6v-10C-219.7,403-217,405.7-217,409z M-269,403v10 c-3.3,0-6,2.7-6,6v-10C-275,405.7-272.3,403-269,403z"></path>
+                                            <path id="Fill-1" fill="#FF7474" d="M-239,384c0-3.9-3.1-7-7-7s-7,3.1-7,7s3.1,7,7,7S-239,387.9-239,384L-239,384z M-243.4,413 l-2.6,4l-2.6-4l-10.4-16c0,0-4-6.4-4-13c0-9.4,7.6-17,17-17s17,7.6,17,17c0,7.5-4,13-4,13L-243.4,413z"></path>
+                                        </g>
+                                        <path fill="#E0E0E0" d="M-234,426.5h-28h-6c-3.6,0-6.5-2.9-6.5-6.5c0-3.4,2.6-6.2,6-6.5l0-9c-2.8,0.3-5,2.6-5,5.5v3c0,0.3-0.2,0.5-0.5,0.5s-0.5-0.2-0.5-0.5v-3c0-3.6,2.9-6.5,6.5-6.5c0.3,0,0.5,0.2,0.5,0.5l0,10c0,0.1-0.1,0.3-0.1,0.4s-0.2,0.1-0.4,0.1c-3,0-5.5,2.5-5.5,5.5s2.5,5.5,5.5,5.5h5.7l1.6-3.2l-9.5-3.8c-0.3-0.1-0.4-0.4-0.3-0.6s0.4-0.4,0.6-0.3l9.6,3.8l3.4-6.9h-7.2c-0.3,0-0.5-0.2-0.5-0.5s0.2-0.5,0.5-0.5h8h4c0.3,0,0.5,0.2,0.5,0.5s-0.2,0.5-0.5,0.5h-3.7l-3.5,7h23.2l-2.4-7.3c-0.1-0.2,0-0.3,0.1-0.5c0.1-0.1,0.2-0.2,0.4-0.2h12c0.3,0,0.5,0.2,0.5,0.5s-0.2,0.5-0.5,0.5h-11.3l2.3,7h6.7l5.8-7.7V404c0-0.3,0.2-0.5,0.5-0.5c3.6,0,6.5,2.9,6.5,6.5v3c0,0.3-0.2,0.5-0.5,0.5s-0.5-0.2-0.5-0.5v-3c0-2.9-2.2-5.2-5-5.5v9c3.4,0.3,6,3.1,6,6.5c0,3.6-2.9,6.5-6.5,6.5H-234z M-233.6,425.5h11.6c3,0,5.5-2.5,5.5-5.5c0-3-2.3-5.4-5.3-5.5l-5.2,7h7c0.3,0,0.5,0.2,0.5,0.5s-0.2,0.5-0.5,0.5h-8h-6.6L-233.6,425.5z M-261.2,425.5h26.5l-1-3h-24L-261.2,425.5z M-245,418.5c-0.2,0-0.3-0.1-0.4-0.2l-13-20c-0.2-0.3-4.1-6.6-4.1-13.3c0-9.6,7.9-17.5,17.5-17.5s17.5,7.9,17.5,17.5c0,7.5-3.8,12.9-4.1,13.3l-13,20C-244.7,418.4-244.8,418.5-245,418.5z M-245,368.5c-9.1,0-16.5,7.4-16.5,16.5c0,6.3,3.9,12.7,3.9,12.7l12.6,19.3l12.6-19.4c0-0.1,3.9-5.5,3.9-12.7C-228.5,375.9-235.9,368.5-245,368.5z M-245,392.5c-4.1,0-7.5-3.4-7.5-7.5s3.4-7.5,7.5-7.5s7.5,3.4,7.5,7.5S-240.9,392.5-245,392.5z M-245,378.5c-3.6,0-6.5,2.9-6.5,6.5s2.9,6.5,6.5,6.5s6.5-2.9,6.5-6.5S-241.4,378.5-245,378.5z"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
                         <h3 class="info-card__titulo">Ubicación</h3>
                         <p class="info-card__texto">Biblioteca principal</p>
                         <p class="info-card__detalle">Planta baja — Ala norte</p>
                     </div>
 
                     <div class="info-card">
-                        <div class="info-card__icono" aria-hidden="true">🎓</div>
+                        <div class="info-card__icono" aria-hidden="true">
+                            <svg class="info-card__svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27 2H5C3.34315 2 2 3.34315 2 5V19C2 20.6569 3.34315 22 5 22H27C28.6569 22 30 20.6569 30 19V5C30 3.34315 28.6569 2 27 2Z" fill="#1565C0"></path>
+                                <path d="M14.09 11.15C14.5183 10.734 14.8128 10.1997 14.9357 9.61538C15.0587 9.03108 15.0044 8.42339 14.78 7.8701C14.5555 7.3168 14.1711 6.84306 13.6758 6.50952C13.1806 6.17598 12.5971 5.9978 12 5.9978C11.4029 5.9978 10.8194 6.17598 10.3242 6.50952C9.82892 6.84306 9.44447 7.3168 9.22002 7.8701C8.99557 8.42339 8.94134 9.03108 9.06426 9.61538C9.18717 10.1997 9.48165 10.734 9.91 11.15C7.68 11.75 6 14.14 6 17C6 17.2652 6.10536 17.5196 6.29289 17.7071C6.48043 17.8946 6.73478 18 7 18C7.26522 18 7.51957 17.8946 7.70711 17.7071C7.89464 17.5196 8 17.2652 8 17C8 14.79 9.35 13 11 13H13C14.65 13 16 14.79 16 17C16 17.2652 16.1054 17.5196 16.2929 17.7071C16.4804 17.8946 16.7348 18 17 18C17.2652 18 17.5196 17.8946 17.7071 17.7071C17.8946 17.5196 18 17.2652 18 17C18 14.14 16.32 11.75 14.09 11.15ZM12 7.99999C12.1978 7.99999 12.3911 8.05864 12.5556 8.16852C12.72 8.2784 12.8482 8.43458 12.9239 8.6173C12.9996 8.80003 13.0194 9.0011 12.9808 9.19508C12.9422 9.38906 12.847 9.56724 12.7071 9.70709C12.5673 9.84695 12.3891 9.94219 12.1951 9.98077C12.0011 10.0194 11.8 9.99955 11.6173 9.92387C11.4346 9.84818 11.2784 9.72001 11.1685 9.55556C11.0586 9.39111 11 9.19777 11 8.99999C11 8.73477 11.1054 8.48042 11.2929 8.29288C11.4804 8.10534 11.7348 7.99999 12 7.99999Z" fill="#E64A19"></path>
+                                <path d="M25 8H22C21.7348 8 21.4804 7.89464 21.2929 7.70711C21.1054 7.51957 21 7.26522 21 7C21 6.73478 21.1054 6.48043 21.2929 6.29289C21.4804 6.10536 21.7348 6 22 6H25C25.2652 6 25.5196 6.10536 25.7071 6.29289C25.8946 6.48043 26 6.73478 26 7C26 7.26522 25.8946 7.51957 25.7071 7.70711C25.5196 7.89464 25.2652 8 25 8Z" fill="#E0E0E0"></path>
+                                <path d="M25 12H19C18.7348 12 18.4804 11.8946 18.2929 11.7071C18.1054 11.5196 18 11.2652 18 11C18 10.7348 18.1054 10.4804 18.2929 10.2929C18.4804 10.1054 18.7348 10 19 10H25C25.2652 10 25.5196 10.1054 25.7071 10.2929C25.8946 10.4804 26 10.7348 26 11C26 11.2652 25.8946 11.5196 25.7071 11.7071C25.5196 11.8946 25.2652 12 25 12Z" fill="#E0E0E0"></path>
+                                <path d="M25 16H22C21.7348 16 21.4804 15.8946 21.2929 15.7071C21.1054 15.5196 21 15.2652 21 15C21 14.7348 21.1054 14.4804 21.2929 14.2929C21.4804 14.1054 21.7348 14 22 14H25C25.2652 14 25.5196 14.1054 25.7071 14.2929C25.8946 14.4804 26 14.7348 26 15C26 15.2652 25.8946 15.5196 25.7071 15.7071C25.5196 15.8946 25.2652 16 25 16Z" fill="#E0E0E0"></path>
+                                <path d="M27 24H5C4.20435 24 3.44129 24.3161 2.87868 24.8787C2.31607 25.4413 2 26.2044 2 27C2 27.7956 2.31607 28.5587 2.87868 29.1213C3.44129 29.6839 4.20435 30 5 30H27C27.7956 30 28.5587 29.6839 29.1213 29.1213C29.6839 28.5587 30 27.7956 30 27C30 26.2044 29.6839 25.4413 29.1213 24.8787C28.5587 24.3161 27.7956 24 27 24Z" fill="#37474F"></path>
+                                <path d="M5 2C4.20435 2 3.44129 2.31607 2.87868 2.87868C2.31607 3.44129 2 4.20435 2 5V19C2 19.7956 2.31607 20.5587 2.87868 21.1213C3.44129 21.6839 4.20435 22 5 22H16V2H5Z" fill="#1E88E5"></path>
+                            </svg>
+                        </div>
                         <h3 class="info-card__titulo">Atención a</h3>
                         <p class="info-card__texto">Estudiantes y docentes</p>
                         <p class="info-card__detalle">Colegio Humboldt</p>
                     </div>
 
                     <div class="info-card">
-                        <div class="info-card__icono" aria-hidden="true">📞</div>
+                        <div class="info-card__icono" aria-hidden="true">
+                            <svg class="info-card__svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15.5562 14.5477L15.1007 15.0272C15.1007 15.0272 14.0181 16.167 11.0631 13.0559C8.10812 9.94484 9.1907 8.80507 9.1907 8.80507L9.47752 8.50311C10.1841 7.75924 10.2507 6.56497 9.63424 5.6931L8.37326 3.90961C7.61028 2.8305 6.13596 2.68795 5.26145 3.60864L3.69185 5.26114C3.25823 5.71766 2.96765 6.30945 3.00289 6.96594C3.09304 8.64546 3.81071 12.259 7.81536 16.4752C12.0621 20.9462 16.0468 21.1239 17.6763 20.9631C18.1917 20.9122 18.6399 20.6343 19.0011 20.254L20.4217 18.7584C21.3806 17.7489 21.1102 16.0182 19.8833 15.312L17.9728 14.2123C17.1672 13.7486 16.1858 13.8848 15.5562 14.5477Z" fill="#80D6FA"></path>
+                                <path d="M13.2595 1.87983C13.3257 1.47094 13.7122 1.19357 14.1211 1.25976C14.1464 1.26461 14.2279 1.27983 14.2705 1.28933C14.3559 1.30834 14.4749 1.33759 14.6233 1.38082C14.9201 1.46726 15.3347 1.60967 15.8323 1.8378C16.8286 2.29456 18.1544 3.09356 19.5302 4.46936C20.906 5.84516 21.705 7.17097 22.1617 8.16725C22.3899 8.66487 22.5323 9.07947 22.6187 9.37625C22.6619 9.52466 22.6912 9.64369 22.7102 9.72901C22.7197 9.77168 22.7267 9.80594 22.7315 9.83125L22.7373 9.86245C22.8034 10.2713 22.5286 10.6739 22.1197 10.7401C21.712 10.8061 21.3279 10.53 21.2601 10.1231C21.258 10.1121 21.2522 10.0828 21.2461 10.0551C21.2337 9.9997 21.2124 9.91188 21.1786 9.79572C21.1109 9.56339 20.9934 9.21806 20.7982 8.79238C20.4084 7.94207 19.7074 6.76789 18.4695 5.53002C17.2317 4.29216 16.0575 3.59117 15.2072 3.20134C14.7815 3.00618 14.4362 2.88865 14.2038 2.82097C14.0877 2.78714 13.9417 2.75363 13.8863 2.7413C13.4793 2.67347 13.1935 2.28755 13.2595 1.87983Z" fill="#80D6FA"></path>
+                            </svg>
+                        </div>
                         <h3 class="info-card__titulo">Contacto</h3>
                         <p class="info-card__texto">biblioteca@humboldt.edu</p>
                         <p class="info-card__detalle">Ext. 201</p>
@@ -274,6 +340,183 @@
             </button>
         </div>
     </div>
+
+    <!-- ===== MODAL LOGIN ADMINISTRADOR ===== -->
+    <div class="modal-overlay" id="modalAdminLogin" role="dialog" aria-modal="true" aria-labelledby="modalAdminLoginTitulo" style="display: none;">
+        <div class="modal modal--admin-login">
+            <button class="modal__cerrar" id="modalAdminLoginCerrar" aria-label="Cerrar">✕</button>
+            <div class="modal__icono" aria-hidden="true">
+                <span class="material-symbols-outlined" style="font-size: 2.8rem; color: var(--primary);">admin_panel_settings</span>
+            </div>
+            <h3 class="modal__titulo" id="modalAdminLoginTitulo">Acceso Administrador</h3>
+            <p class="modal__libro-nombre">Ingresa la contraseña administrativa para gestionar los libros.</p>
+
+            <form id="formAdminLogin" class="form-admin">
+                <div class="form-grupo">
+                    <label for="adminPassword" class="form-label">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="adminPassword" class="form-input" placeholder="Ej. admin123" required autocomplete="current-password">
+                        <button type="button" id="btnTogglePassword" class="btn-toggle-pwd" aria-label="Mostrar/Ocultar contraseña">
+                            <span class="material-symbols-outlined" id="iconTogglePassword">visibility</span>
+                        </button>
+                    </div>
+                    
+                </div>
+                <div id="adminLoginError" class="form-error" style="display: none;">
+                    Contraseña incorrecta. Inténtalo de nuevo.
+                </div>
+                <div class="modal__form-acciones">
+                    <button type="button" class="btn btn--secundario" id="btnCancelarLoginAdmin">Cancelar</button>
+                    <button type="submit" class="btn btn--primario">
+                        <span class="material-symbols-outlined">login</span>
+                        Iniciar Sesión
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== MODAL FORMULARIO DE LIBRO (CREAR / EDITAR) ===== -->
+    <div class="modal-overlay" id="modalLibroForm" role="dialog" aria-modal="true" aria-labelledby="modalLibroFormTitulo" style="display: none;">
+        <div class="modal modal--form-libro">
+            <button class="modal__cerrar" id="modalLibroFormCerrar" aria-label="Cerrar">✕</button>
+            <div class="modal__header-form">
+                <span class="material-symbols-outlined modal__header-icono" id="modalLibroFormIcono">auto_stories</span>
+                <div>
+                    <h3 class="modal__titulo" id="modalLibroFormTitulo">Agregar Nuevo Libro</h3>
+                    <p class="modal__libro-nombre" id="modalLibroFormSubtitulo">Completa los datos del ejemplar</p>
+                </div>
+            </div>
+
+            <form id="formLibro" class="form-libro">
+                <input type="hidden" id="formLibroId" value="">
+
+                <div class="form-grid">
+                    <!-- Título -->
+                    <div class="form-grupo form-grupo--full">
+                        <label for="formLibroTitulo" class="form-label">Título del Libro *</label>
+                        <input type="text" id="formLibroTitulo" class="form-input" placeholder="Ej. Cien años de soledad" required>
+                    </div>
+
+                    <!-- Autor -->
+                    <div class="form-grupo">
+                        <label for="formLibroAutor" class="form-label">Autor *</label>
+                        <input type="text" id="formLibroAutor" class="form-input" placeholder="Ej. Gabriel García Márquez" required>
+                    </div>
+
+                    <!-- Categoría -->
+                    <div class="form-grupo">
+                        <label for="formLibroCategoria" class="form-label">Categoría *</label>
+                        <select id="formLibroCategoria" class="form-select" required>
+                            <option value="">Selecciona una categoría</option>
+                            <option value="Literatura">Literatura</option>
+                            <option value="Ciencias">Ciencias</option>
+                            <option value="Historia">Historia</option>
+                            <option value="Matemáticas">Matemáticas</option>
+                            <option value="Filosofía">Filosofía</option>
+                            <option value="Arte">Arte</option>
+                            <option value="Tecnología">Tecnología</option>
+                            <option value="Infantil">Infantil</option>
+                            <option value="Otro">Otro...</option>
+                        </select>
+                        <input type="text" id="formLibroCategoriaOtra" class="form-input" placeholder="Especificar categoría" style="display: none; margin-top: 6px;">
+                    </div>
+
+                    <!-- Editorial -->
+                    <div class="form-grupo">
+                        <label for="formLibroEditorial" class="form-label">Editorial *</label>
+                        <input type="text" id="formLibroEditorial" class="form-input" placeholder="Ej. Sudamericana" required>
+                    </div>
+
+                    <!-- Año -->
+                    <div class="form-grupo">
+                        <label for="formLibroAnio" class="form-label">Año de Publicación *</label>
+                        <input type="number" id="formLibroAnio" class="form-input" placeholder="Ej. 1967" min="1" max="2099" required>
+                    </div>
+
+                    <!-- ISBN -->
+                    <div class="form-grupo">
+                        <label for="formLibroIsbn" class="form-label">ISBN *</label>
+                        <input type="text" id="formLibroIsbn" class="form-input" placeholder="Ej. 978-0307474728" required>
+                    </div>
+
+                    <!-- Copias Totales y Disponibles -->
+                    <div class="form-grupo">
+                        <label for="formLibroCopiasTotal" class="form-label">Copias Totales *</label>
+                        <input type="number" id="formLibroCopiasTotal" class="form-input" placeholder="Ej. 3" min="1" max="99" value="1" required>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label for="formLibroCopiasDisponibles" class="form-label">Copias Disponibles *</label>
+                        <input type="number" id="formLibroCopiasDisponibles" class="form-input" placeholder="Ej. 2" min="0" max="99" value="1" required>
+                        <span class="form-hint">Si es 0, se marcará como Prestado.</span>
+                    </div>
+
+                    <!-- Imagen Portada (URL o ruta local) -->
+                    <div class="form-grupo form-grupo--full">
+                        <label for="formLibroImagen" class="form-label">Ruta o URL de Imagen de Portada (Opcional)</label>
+                        <input type="text" id="formLibroImagen" class="form-input" placeholder="Ej. images/cover-1.jpg o https://...">
+                        <span class="form-hint">Si se deja en blanco, se generará una portada estilizada con el color de la categoría.</span>
+                    </div>
+
+                    <!-- Sección de Ubicación Física -->
+                    <div class="form-seccion-titulo form-grupo--full">
+                        <span class="material-symbols-outlined">location_on</span>
+                        <span>Ubicación Física en Biblioteca</span>
+                    </div>
+
+                    <!-- Estantería -->
+                    <div class="form-grupo">
+                        <label for="formLibroEstanteria" class="form-label">Estantería *</label>
+                        <input type="text" id="formLibroEstanteria" class="form-input" placeholder="Ej. Estantería A" required>
+                    </div>
+
+                    <!-- Sección -->
+                    <div class="form-grupo">
+                        <label for="formLibroSeccion" class="form-label">Sección *</label>
+                        <input type="text" id="formLibroSeccion" class="form-input" placeholder="Ej. Clásicos Latinoamericanos" required>
+                    </div>
+
+                    <!-- Nivel -->
+                    <div class="form-grupo form-grupo--full">
+                        <label for="formLibroNivel" class="form-label">Nivel / Baldosa *</label>
+                        <input type="text" id="formLibroNivel" class="form-input" placeholder="Ej. Nivel 3" required>
+                    </div>
+                </div>
+
+                <div class="modal__form-acciones">
+                    <button type="button" class="btn btn--secundario" id="btnCancelarLibroForm">Cancelar</button>
+                    <button type="submit" class="btn btn--primario" id="btnGuardarLibro">
+                        <span class="material-symbols-outlined">save</span>
+                        Guardar Libro
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== MODAL CONFIRMACIÓN DE ELIMINACIÓN ===== -->
+    <div class="modal-overlay" id="modalConfirmarEliminar" role="dialog" aria-modal="true" aria-labelledby="modalEliminarTitulo" style="display: none;">
+        <div class="modal modal--eliminar">
+            <button class="modal__cerrar" id="modalEliminarCerrar" aria-label="Cerrar">✕</button>
+            <div class="modal__icono modal__icono--peligro" aria-hidden="true">
+                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--error);">delete_forever</span>
+            </div>
+            <h3 class="modal__titulo" id="modalEliminarTitulo">¿Eliminar este libro?</h3>
+            <p class="modal__libro-nombre" id="modalEliminarNombreLibro">Esta acción eliminará el libro permanentemente del catálogo.</p>
+
+            <div class="modal__form-acciones">
+                <button type="button" class="btn btn--secundario" id="btnCancelarEliminar">Cancelar</button>
+                <button type="button" class="btn btn--peligro" id="btnConfirmarEliminar">
+                    <span class="material-symbols-outlined">delete</span>
+                    Eliminar Definitivamente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONTENEDOR TOAST (NOTIFICACIONES) ===== -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
     <!-- ===== BOTTOM NAV (móvil, estilo Stitch) ===== -->
     <nav class="bottom-nav" aria-label="Navegación móvil">
