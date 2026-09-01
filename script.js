@@ -566,11 +566,12 @@ function crearTarjeta(libro, indice) {
     // Portada imagen real o fallback degradado
     const portadaHTML = libro.imagen
         ? `<img
-                src="${libro.imagen}"
+                src="${escaparHTML(libro.imagen)}"
                 alt="Portada de ${escaparHTML(libro.titulo)}"
                 class="libro-card__portada-img"
                 loading="lazy"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                referrerpolicy="no-referrer"
+                onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
            >
            <span class="libro-card__portada-letras" style="display:none;">${iniciales}</span>`
         : `<span class="libro-card__portada-letras">${iniciales}</span>`;
@@ -651,7 +652,7 @@ function crearTarjeta(libro, indice) {
                            Disponibilidad
                        </button>`
                     : `<p class="copias-agotadas-aviso">
-                           🔴 Todos los ejemplares (${totalCopias}) prestados
+                        Todos los ejemplares (${totalCopias}) prestados
                        </p>`
                 }
             </div>
@@ -898,6 +899,62 @@ function devolverCopia(id) {
 }
 
 /**
+ * Actualiza la vista previa de la imagen en el formulario de libro.
+ * @param {string} url - URL o ruta de la imagen
+ */
+function actualizarPreviewImagen(url) {
+    const preview = document.getElementById('formLibroImagenPreview');
+    const placeholder = document.getElementById('formLibroImagenPreviewPlaceholder');
+    const feedback = document.getElementById('formLibroImagenFeedback');
+
+    if (!preview || !placeholder) return;
+
+    const trimmed = (url || '').trim();
+    if (!trimmed) {
+        preview.style.display = 'none';
+        preview.src = '';
+        placeholder.style.display = 'block';
+        placeholder.textContent = 'Sin imagen';
+        if (feedback) feedback.style.display = 'none';
+        return;
+    }
+
+    placeholder.style.display = 'block';
+    placeholder.textContent = 'Cargando...';
+    preview.style.display = 'none';
+
+    const testImg = new Image();
+    testImg.referrerPolicy = 'no-referrer';
+    testImg.onload = function() {
+        preview.src = trimmed;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+        if (feedback) {
+            feedback.style.display = 'block';
+            feedback.style.color = '#16a34a';
+            feedback.textContent = '✓ Imagen válida cargada correctamente';
+        }
+    };
+    testImg.onerror = function() {
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+        placeholder.textContent = 'Error URL';
+        if (feedback) {
+            feedback.style.display = 'block';
+            feedback.style.color = 'var(--error)';
+            feedback.textContent = '⚠️ No se pudo cargar la imagen. Asegúrate de copiar el enlace directo a la imagen (.jpg, .png, .webp).';
+        }
+    };
+    testImg.src = trimmed;
+}
+
+if (formLibroImagen) {
+    formLibroImagen.addEventListener('input', function() {
+        actualizarPreviewImagen(this.value);
+    });
+}
+
+/**
  * Abre el modal para crear un nuevo libro.
  */
 function abrirModalCrearLibro() {
@@ -909,6 +966,7 @@ function abrirModalCrearLibro() {
     modalLibroFormTitulo.textContent = 'Agregar Nuevo Libro';
     modalLibroFormSubtitulo.textContent = 'Ingresa los datos y la cantidad de copias del ejemplar';
     modalLibroFormIcono.textContent = 'add_circle';
+    actualizarPreviewImagen('');
 
     modalLibroForm.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -933,6 +991,7 @@ function abrirModalEditarLibro(id) {
     formLibroCopiasTotal.value      = typeof libro.copiasTotal === 'number' ? libro.copiasTotal : 1;
     formLibroCopiasDisponibles.value= typeof libro.copiasDisponibles === 'number' ? libro.copiasDisponibles : 1;
     formLibroImagen.value           = libro.imagen || '';
+    actualizarPreviewImagen(libro.imagen || '');
 
     // Manejo de categoría
     const categoriasSelect = Array.from(formLibroCategoria.options).map(o => o.value);

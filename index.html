@@ -439,11 +439,20 @@
                         <span class="form-hint">Si es 0, se marcará como Prestado.</span>
                     </div>
 
-                    <!-- Imagen Portada (URL o ruta local) -->
+                    <!-- Imagen Portada (URL o ruta local con vista previa) -->
                     <div class="form-grupo form-grupo--full">
                         <label for="formLibroImagen" class="form-label">Ruta o URL de Imagen de Portada (Opcional)</label>
-                        <input type="text" id="formLibroImagen" class="form-input" placeholder="Ej. images/cover-1.jpg o https://...">
-                        <span class="form-hint">Si se deja en blanco, se generará una portada estilizada con el color de la categoría.</span>
+                        <div style="display: flex; gap: 12px; align-items: flex-start;">
+                            <div style="flex: 1;">
+                                <input type="text" id="formLibroImagen" class="form-input" placeholder="Ej. https://.../portada.jpg o images/cover-1.jpg">
+                                <span class="form-hint">Pega el enlace directo a una imagen (.jpg, .png, .webp). Si se deja en blanco, se creará una portada automática.</span>
+                                <div id="formLibroImagenFeedback" style="display: none; font-size: 0.75rem; margin-top: 5px; font-weight: 500;"></div>
+                            </div>
+                            <div id="formLibroImagenPreviewBox" style="width: 54px; height: 78px; border-radius: 6px; border: 1px dashed var(--outline-variant); background: var(--surface-container-high); overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative;">
+                                <span id="formLibroImagenPreviewPlaceholder" style="font-size: 0.62rem; color: var(--outline); text-align: center; line-height: 1.2; padding: 2px;">Vista previa</span>
+                                <img id="formLibroImagenPreview" src="" alt="Vista previa" style="display: none; width: 100%; height: 100%; object-fit: cover;" referrerpolicy="no-referrer">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Sección de Ubicación Física -->
