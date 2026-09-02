@@ -351,27 +351,27 @@ const LIBROS_INICIALES = [
 ];
 
 /* ============================================================
-   2. ESTADO GLOBAL Y PERSISTENCIA (localStorage)
+   2. ESTADO GLOBAL Y PERSISTENCIA (Supabase + localStorage Fallback)
    ============================================================ */
 const STORAGE_KEY_LIBROS = 'humboldt_biblioteca_libros';
 const STORAGE_KEY_ADMIN  = 'humboldt_biblioteca_admin';
 const CLAVE_ADMIN        = 'admin123'; // Contraseña de administración
 
-let libros = cargarLibros();
+let libros = cargarLibrosLocal();
 let esAdmin = localStorage.getItem(STORAGE_KEY_ADMIN) === 'true';
 let libroAEliminarId = null;
+let conexionSupabaseActiva = false;
 
 /**
  * Carga los libros desde localStorage o inicializa con el array por defecto.
  * Asegura que todos los libros tengan los campos copiasTotal, copiasDisponibles e imagen.
  */
-function cargarLibros() {
+function cargarLibrosLocal() {
     try {
         const data = localStorage.getItem(STORAGE_KEY_LIBROS);
         if (data) {
             const parseados = JSON.parse(data);
             if (Array.isArray(parseados) && parseados.length > 0) {
-                // Normalizar campos y asignar portadas si no las tenían
                 parseados.forEach(function(l) {
                     if (typeof l.copiasTotal === 'undefined') {
                         l.copiasTotal = l.estado === 'Disponible' ? 3 : 2;
@@ -380,11 +380,9 @@ function cargarLibros() {
                     if (typeof l.copiasDisponibles === 'undefined') {
                         l.copiasDisponibles = l.estado === 'Disponible' ? l.copiasTotal : 0;
                     }
-                    // Asignar carátula si es de los libros base y no tenía
                     if (!l.imagen && l.id >= 1 && l.id <= 18) {
                         l.imagen = `images/cover-${l.id}.jpg`;
                     }
-                    // Sincronizar estado con copias disponibles
                     l.estado = l.copiasDisponibles > 0 ? 'Disponible' : 'Prestado';
                 });
                 return parseados;
@@ -393,19 +391,75 @@ function cargarLibros() {
     } catch (e) {
         console.warn('Error al leer de localStorage:', e);
     }
-    // Si no hay datos, inicializamos con los libros por defecto
-    guardarLibros(LIBROS_INICIALES);
+    guardarLibrosLocal(LIBROS_INICIALES);
     return JSON.parse(JSON.stringify(LIBROS_INICIALES));
 }
 
 /**
- * Guarda el array de libros en localStorage.
+ * Guarda el array de libros en localStorage como respaldo offline.
  */
-function guardarLibros(lista) {
+function guardarLibrosLocal(lista) {
     try {
         localStorage.setItem(STORAGE_KEY_LIBROS, JSON.stringify(lista));
     } catch (e) {
         console.error('Error al guardar en localStorage:', e);
+    }
+}
+
+/**
+ * Carga los libros desde Supabase si está disponible, o desde localStorage en caso contrario.
+ */
+async function cargarLibrosAsync() {
+    if (typeof esSupabaseActivo === 'function' && esSupabaseActivo()) {
+        try {
+            const librosNube = await apiObtenerLibrosSupabase();
+            if (librosNube && Array.isArray(librosNube)) {
+                if (librosNube.length > 0) {
+                    libros = librosNube;
+                    guardarLibrosLocal(libros);
+                    conexionSupabaseActiva = true;
+                    actualizarBadgeConexionDB(true);
+                    return libros;
+                } else {
+                    // La tabla existe pero está vacía: podemos sincronizar los iniciales automáticamente
+                    console.log('Tabla en Supabase vacía. Conservando datos locales.');
+                    conexionSupabaseActiva = true;
+                    actualizarBadgeConexionDB(true);
+                }
+            }
+        } catch (err) {
+            console.warn('No se pudo conectar a Supabase, usando respaldo local:', err);
+            conexionSupabaseActiva = false;
+        }
+    }
+    libros = cargarLibrosLocal();
+    actualizarBadgeConexionDB(false);
+    return libros;
+}
+
+/**
+ * Actualiza la apariencia del badge de estado de base de datos en la barra admin.
+ */
+function actualizarBadgeConexionDB(enLinea) {
+    const badge = document.getElementById('dbStatusBadge');
+    const icon = document.getElementById('dbStatusIcon');
+    const text = document.getElementById('dbStatusText');
+
+    if (!badge || !icon || !text) return;
+
+    if (enLinea) {
+        badge.style.background = 'rgba(34, 197, 94, 0.2)';
+        badge.style.borderColor = 'rgba(34, 197, 94, 0.5)';
+        badge.style.color = '#86efac';
+        icon.textContent = 'cloud_done';
+        text.textContent = 'Supabase Conectado';
+    } else {
+        const tieneCredenciales = typeof SUPABASE_CONFIG !== 'undefined' && SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey;
+        badge.style.background = 'rgba(255, 255, 255, 0.12)';
+        badge.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+        badge.style.color = '#ffffff';
+        icon.textContent = tieneCredenciales ? 'cloud_off' : 'storage';
+        text.textContent = tieneCredenciales ? 'Modo Offline (Local)' : 'Modo Local (Sin Nube)';
     }
 }
 
@@ -436,6 +490,7 @@ const btnAdminAuthMobileText = document.getElementById('btnAdminAuthMobileText')
 // Toolbar Admin
 const adminToolbar          = document.getElementById('adminToolbar');
 const btnNuevoLibro         = document.getElementById('btnNuevoLibro');
+const btnMigrarSupabase     = document.getElementById('btnMigrarSupabase');
 const btnRestablecerCatalogo= document.getElementById('btnRestablecerCatalogo');
 const btnCerrarSesionAdmin  = document.getElementById('btnCerrarSesionAdmin');
 
@@ -492,9 +547,22 @@ const toastContainer = document.getElementById('toastContainer');
 /* ============================================================
    4. INICIALIZACIÓN
    ============================================================ */
-function inicializar() {
-    poblarFiltros();
+async function inicializar() {
+    if (typeof inicializarSupabase === 'function') {
+        inicializarSupabase();
+    }
+
     actualizarEstadoAdminUI();
+    actualizarBadgeConexionDB(false);
+
+    // Carga inicial reactiva
+    poblarFiltros();
+    renderizarLibros(libros);
+    actualizarContador(libros.length);
+
+    // Intentar sincronización con Supabase en segundo plano
+    await cargarLibrosAsync();
+    poblarFiltros();
     renderizarLibros(libros);
     actualizarContador(libros.length);
 }
@@ -861,23 +929,32 @@ btnTogglePassword.addEventListener('click', function() {
 });
 
 /* ============================================================
-   8. OPERACIONES CRUD Y GESTIÓN DE COPIAS
+   8. OPERACIONES CRUD Y GESTIÓN DE COPIAS (Supabase + Local)
    ============================================================ */
 
 /**
  * Presta una copia del libro (-1 disponible).
  * @param {number} id - ID del libro
  */
-function prestarCopia(id) {
+async function prestarCopia(id) {
     const libro = libros.find(l => l.id === id);
     if (!libro) return;
 
     if (libro.copiasDisponibles > 0) {
         libro.copiasDisponibles--;
         libro.estado = libro.copiasDisponibles > 0 ? 'Disponible' : 'Prestado';
-        guardarLibros(libros);
+        guardarLibrosLocal(libros);
         filtrarYRenderizar();
         mostrarToast(`Copia prestada de "${libro.titulo}". Quedan ${libro.copiasDisponibles} disponibles.`, 'info');
+
+        // Sincronizar en Supabase si está activo
+        if (typeof esSupabaseActivo === 'function' && esSupabaseActivo()) {
+            try {
+                await apiActualizarLibroSupabase(libro.id, libro);
+            } catch (err) {
+                console.warn('No se pudo sincronizar préstamo en Supabase:', err);
+            }
+        }
     }
 }
 
@@ -885,16 +962,25 @@ function prestarCopia(id) {
  * Devuelve una copia del libro (+1 disponible).
  * @param {number} id - ID del libro
  */
-function devolverCopia(id) {
+async function devolverCopia(id) {
     const libro = libros.find(l => l.id === id);
     if (!libro) return;
 
     if (libro.copiasDisponibles < libro.copiasTotal) {
         libro.copiasDisponibles++;
         libro.estado = 'Disponible';
-        guardarLibros(libros);
+        guardarLibrosLocal(libros);
         filtrarYRenderizar();
         mostrarToast(`Copia devuelta de "${libro.titulo}". Ahora hay ${libro.copiasDisponibles} disponibles.`, 'success');
+
+        // Sincronizar en Supabase si está activo
+        if (typeof esSupabaseActivo === 'function' && esSupabaseActivo()) {
+            try {
+                await apiActualizarLibroSupabase(libro.id, libro);
+            } catch (err) {
+                console.warn('No se pudo sincronizar devolución en Supabase:', err);
+            }
+        }
     }
 }
 
@@ -1020,7 +1106,7 @@ function abrirModalEditarLibro(id) {
 /**
  * Guarda (Crear o Actualizar) un libro a partir del formulario.
  */
-formLibro.addEventListener('submit', function(e) {
+formLibro.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const idExistente = formLibroId.value ? parseInt(formLibroId.value, 10) : null;
@@ -1059,16 +1145,37 @@ formLibro.addEventListener('submit', function(e) {
         const index = libros.findIndex(l => l.id === idExistente);
         if (index !== -1) {
             libros[index] = { ...libroData, id: idExistente };
-            mostrarToast(`"${libroData.titulo}" actualizado correctamente`, 'success');
+            mostrarToast(`"${libroData.titulo}" actualizado`, 'success');
+        }
+
+        if (typeof esSupabaseActivo === 'function' && esSupabaseActivo()) {
+            try {
+                await apiActualizarLibroSupabase(idExistente, libroData);
+            } catch (err) {
+                console.warn('Error al actualizar en Supabase:', err);
+            }
         }
     } else {
         // CREAR (Create)
-        const nuevoId = libros.length > 0 ? Math.max(...libros.map(l => l.id)) + 1 : 1;
-        libros.unshift({ ...libroData, id: nuevoId });
+        let nuevoId = libros.length > 0 ? Math.max(...libros.map(l => l.id)) + 1 : 1;
+        let libroGuardado = { ...libroData, id: nuevoId };
+
+        if (typeof esSupabaseActivo === 'function' && esSupabaseActivo()) {
+            try {
+                const creadoEnNube = await apiInsertarLibroSupabase(libroData);
+                if (creadoEnNube && creadoEnNube.id) {
+                    libroGuardado = creadoEnNube;
+                }
+            } catch (err) {
+                console.warn('Error al insertar en Supabase, guardando local:', err);
+            }
+        }
+
+        libros.unshift(libroGuardado);
         mostrarToast(`"${libroData.titulo}" agregado al catálogo`, 'success');
     }
 
-    guardarLibros(libros);
+    guardarLibrosLocal(libros);
     poblarFiltros();
     filtrarYRenderizar();
     cerrarModalLibroForm();
@@ -1106,25 +1213,60 @@ function cerrarModalEliminar() {
     document.body.style.overflow = '';
 }
 
-btnConfirmarEliminar.addEventListener('click', function() {
+btnConfirmarEliminar.addEventListener('click', async function() {
     if (!libroAEliminarId) return;
 
-    const libro = libros.find(l => l.id === libroAEliminarId);
+    const idBorrar = libroAEliminarId;
+    const libro = libros.find(l => l.id === idBorrar);
     const tituloLibro = libro ? libro.titulo : 'Libro';
 
-    libros = libros.filter(l => l.id !== libroAEliminarId);
-    guardarLibros(libros);
+    libros = libros.filter(l => l.id !== idBorrar);
+    guardarLibrosLocal(libros);
 
     poblarFiltros();
     filtrarYRenderizar();
     cerrarModalEliminar();
     mostrarToast(`"${tituloLibro}" ha sido eliminado`, 'error');
+
+    if (typeof esSupabaseActivo === 'function' && esSupabaseActivo()) {
+        try {
+            await apiEliminarLibroSupabase(idBorrar);
+        } catch (err) {
+            console.warn('Error al eliminar de Supabase:', err);
+        }
+    }
 });
+
+async function migrarCatalogoASupabase() {
+    if (typeof esSupabaseActivo !== 'function' || !esSupabaseActivo()) {
+        mostrarToast('⚠️ Configura tus credenciales en supabase.config.js primero', 'warning');
+        return;
+    }
+
+    if (confirm(`¿Deseas sincronizar los ${libros.length} libros actuales a tu base de datos Supabase en la nube?`)) {
+        try {
+            mostrarToast('Sincronizando con Supabase...', 'info');
+            const resultado = await apiMigrarLoteSupabase(libros);
+            if (resultado && resultado.length > 0) {
+                libros = resultado;
+                guardarLibrosLocal(libros);
+                poblarFiltros();
+                filtrarYRenderizar();
+                actualizarBadgeConexionDB(true);
+                mostrarToast(`¡${resultado.length} libros sincronizados en la nube!`, 'success');
+            } else {
+                mostrarToast('Se enviaron los libros a la base de datos', 'success');
+            }
+        } catch (err) {
+            mostrarToast('Error al sincronizar con Supabase: ' + err.message, 'error');
+        }
+    }
+}
 
 function restablecerCatalogoOriginal() {
     if (confirm('¿Estás seguro de que deseas restablecer el catálogo a los libros originales? Se perderán los cambios manuales.')) {
         libros = JSON.parse(JSON.stringify(LIBROS_INICIALES));
-        guardarLibros(libros);
+        guardarLibrosLocal(libros);
         poblarFiltros();
         limpiarBusqueda();
         mostrarToast('Catálogo restablecido al estado original', 'info');
@@ -1313,6 +1455,7 @@ modalConfirmarEliminar.addEventListener('click', function(e) {
 });
 
 // Admin Toolbar acciones
+if (btnMigrarSupabase) btnMigrarSupabase.addEventListener('click', migrarCatalogoASupabase);
 btnRestablecerCatalogo.addEventListener('click', restablecerCatalogoOriginal);
 btnCerrarSesionAdmin.addEventListener('click', cerrarSesionAdmin);
 

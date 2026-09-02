@@ -155,9 +155,15 @@
                 <!-- Barra de herramientas de Administrador (visible solo para admin) -->
                 <div class="admin-toolbar" id="adminToolbar" style="display: none;" role="region" aria-label="Panel de Administrador">
                     <div class="admin-toolbar__info">
-                        <div class="admin-badge">
-                            <span class="material-symbols-outlined">admin_panel_settings</span>
-                            <span>Modo Administrador</span>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <div class="admin-badge">
+                                <span class="material-symbols-outlined">admin_panel_settings</span>
+                                <span>Modo Administrador</span>
+                            </div>
+                            <div class="db-badge" id="dbStatusBadge" style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                                <span class="material-symbols-outlined" style="font-size: 14px;" id="dbStatusIcon">cloud_off</span>
+                                <span id="dbStatusText">Modo Local</span>
+                            </div>
                         </div>
                         <p class="admin-toolbar__texto">Gestión y control del inventario bibliotecario</p>
                     </div>
@@ -165,6 +171,10 @@
                         <button class="btn btn--primario btn--admin-add" id="btnNuevoLibro">
                             <span class="material-symbols-outlined">add_circle</span>
                             Nuevo Libro
+                        </button>
+                        <button class="btn btn--secundario" id="btnMigrarSupabase" title="Subir catálogo a Supabase">
+                            <span class="material-symbols-outlined">cloud_upload</span>
+                            Subir a Nube
                         </button>
                         <button class="btn btn--secundario btn--admin-reset" id="btnRestablecerCatalogo" title="Restablecer los 18 libros iniciales">
                             <span class="material-symbols-outlined">restart_alt</span>
@@ -530,6 +540,9 @@
         </a>
     </nav>
 
+    <!-- Supabase CDN Client & Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.config.js"></script>
     <script src="script.js"></script>
 </body>
 
