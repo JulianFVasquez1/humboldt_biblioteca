@@ -219,3 +219,59 @@ async function apiMigrarLoteSupabase(listaLibros) {
         throw err;
     }
 }
+
+/**
+ * ============================================================
+ * MÓDULO DE AUTENTICACIÓN SEGURA (Supabase Auth)
+ * ============================================================
+ */
+
+/**
+ * Inicia sesión de administrador con correo y contraseña en Supabase.
+ */
+async function apiIniciarSesionSupabase(email, password) {
+    if (!esSupabaseActivo()) return null;
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email.trim(),
+            password: password
+        });
+
+        if (error) {
+            console.error('Error al iniciar sesión en Supabase:', error);
+            throw error;
+        }
+        return data;
+    } catch (err) {
+        console.error('Excepción al autenticar en Supabase:', err);
+        throw err;
+    }
+}
+
+/**
+ * Cierra la sesión activa de administrador en Supabase.
+ */
+async function apiCerrarSesionSupabase() {
+    if (!esSupabaseActivo()) return;
+    try {
+        await supabaseClient.auth.signOut();
+    } catch (err) {
+        console.warn('Error al cerrar sesión en Supabase:', err);
+    }
+}
+
+/**
+ * Obtiene la sesión o usuario actualmente autenticado en Supabase.
+ */
+async function apiObtenerSesionActivaSupabase() {
+    if (!esSupabaseActivo()) return null;
+    try {
+        const { data, error } = await supabaseClient.auth.getSession();
+        if (error || !data || !data.session) return null;
+        return data.session.user;
+    } catch (err) {
+        console.warn('Error al verificar sesión en Supabase:', err);
+        return null;
+    }
+}
+

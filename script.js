@@ -505,6 +505,7 @@ const modalBtnCerrar   = document.getElementById('modalBtnCerrar');
 const modalAdminLogin         = document.getElementById('modalAdminLogin');
 const modalAdminLoginCerrar   = document.getElementById('modalAdminLoginCerrar');
 const formAdminLogin          = document.getElementById('formAdminLogin');
+const adminEmail              = document.getElementById('adminEmail');
 const adminPassword           = document.getElementById('adminPassword');
 const btnTogglePassword       = document.getElementById('btnTogglePassword');
 const iconTogglePassword      = document.getElementById('iconTogglePassword');
@@ -550,6 +551,19 @@ const toastContainer = document.getElementById('toastContainer');
 async function inicializar() {
     if (typeof inicializarSupabase === 'function') {
         inicializarSupabase();
+    }
+
+    // Verificar si hay una sesión activa de Supabase Auth
+    if (typeof apiObtenerSesionActivaSupabase === 'function') {
+        try {
+            const usuario = await apiObtenerSesionActivaSupabase();
+            if (usuario) {
+                esAdmin = true;
+                localStorage.setItem(STORAGE_KEY_ADMIN, 'true');
+            }
+        } catch (e) {
+            console.warn('Error al verificar sesión inicial:', e);
+        }
     }
 
     actualizarEstadoAdminUI();
@@ -888,7 +902,13 @@ function abrirModalAdminLogin() {
     adminLoginError.style.display = 'none';
     modalAdminLogin.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    setTimeout(() => adminPassword.focus(), 150);
+    setTimeout(() => {
+        if (adminEmail && !adminEmail.value) {
+            adminEmail.focus();
+        } else {
+            adminPassword.focus();
+        }
+    }, 150);
 }
 
 function cerrarModalAdminLogin() {
@@ -896,27 +916,68 @@ function cerrarModalAdminLogin() {
     document.body.style.overflow = '';
 }
 
-formAdminLogin.addEventListener('submit', function(e) {
+formAdminLogin.addEventListener('submit', async function(e) {
     e.preventDefault();
+    const email = adminEmail ? adminEmail.value.trim() : '';
     const pass = adminPassword.value.trim();
+    const btnSubmit = document.getElementById('btnSubmitLoginAdmin');
 
-    if (pass === CLAVE_ADMIN || pass === 'humboldt2025') {
-        esAdmin = true;
-        localStorage.setItem(STORAGE_KEY_ADMIN, 'true');
-        cerrarModalAdminLogin();
-        actualizarEstadoAdminUI();
-        filtrarYRenderizar();
-        mostrarToast('¡Bienvenido, Administrador!', 'success');
-        adminToolbar.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-        adminLoginError.style.display = 'block';
-        adminPassword.focus();
+    if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Verificando...';
+    }
+
+    try {
+        let autenticado = false;
+
+        // 1. Intentar autenticación con Supabase Auth si está activo y se proporcionó correo
+        if (typeof esSupabaseActivo === 'function' && esSupabaseActivo() && email) {
+            try {
+                const dataAuth = await apiIniciarSesionSupabase(email, pass);
+                if (dataAuth && dataAuth.user) {
+                    autenticado = true;
+                }
+            } catch (errSupabase) {
+                console.warn('Fallo Supabase Auth:', errSupabase);
+                if (errSupabase && errSupabase.message) {
+                    adminLoginError.textContent = 'Error de autenticación: ' + errSupabase.message;
+                }
+            }
+        }
+
+        // 2. Fallback local / legado
+        if (!autenticado && (pass === CLAVE_ADMIN || pass === 'humboldt2025')) {
+            autenticado = true;
+        }
+
+        if (autenticado) {
+            esAdmin = true;
+            localStorage.setItem(STORAGE_KEY_ADMIN, 'true');
+            cerrarModalAdminLogin();
+            actualizarEstadoAdminUI();
+            filtrarYRenderizar();
+            mostrarToast('¡Bienvenido, Administrador!', 'success');
+            adminToolbar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            adminLoginError.style.display = 'block';
+            adminPassword.focus();
+        }
+    } finally {
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<span class="material-symbols-outlined">login</span> Iniciar Sesión';
+        }
     }
 });
 
-function cerrarSesionAdmin() {
+async function cerrarSesionAdmin() {
     esAdmin = false;
     localStorage.removeItem(STORAGE_KEY_ADMIN);
+
+    if (typeof apiCerrarSesionSupabase === 'function') {
+        await apiCerrarSesionSupabase();
+    }
+
     actualizarEstadoAdminUI();
     filtrarYRenderizar();
     mostrarToast('Sesión de administrador finalizada', 'info');

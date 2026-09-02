@@ -35,28 +35,40 @@ CREATE INDEX IF NOT EXISTS idx_libros_estado ON public.libros (estado);
 -- 3. Configurar Políticas de Seguridad (Row Level Security - RLS)
 ALTER TABLE public.libros ENABLE ROW LEVEL SECURITY;
 
--- Permitir lectura a todos (público / estudiantes)
+-- REGLA 1: Permitir lectura pública a todos (estudiantes, docentes, anónimos y autenticados)
+DROP POLICY IF EXISTS "Permitir lectura publica de libros" ON public.libros;
+DROP POLICY IF EXISTS "Permitir solo lectura a publico anonimo" ON public.libros;
 CREATE POLICY "Permitir lectura publica de libros" 
 ON public.libros 
 FOR SELECT 
+TO anon, authenticated
 USING (true);
 
--- Permitir insertar libros (para el catálogo / admin)
-CREATE POLICY "Permitir insertar libros" 
+-- REGLA 2: Solo usuarios AUTENTICADOS (Administradores con sesión real) pueden insertar libros
+DROP POLICY IF EXISTS "Permitir insertar libros" ON public.libros;
+DROP POLICY IF EXISTS "Solo administradores autenticados pueden insertar" ON public.libros;
+CREATE POLICY "Solo administradores autenticados pueden insertar" 
 ON public.libros 
 FOR INSERT 
+TO authenticated
 WITH CHECK (true);
 
--- Permitir actualizar libros (modificar copias, estado, datos)
-CREATE POLICY "Permitir actualizar libros" 
+-- REGLA 3: Solo usuarios AUTENTICADOS pueden modificar libros (editar o prestar/devolver copias)
+DROP POLICY IF EXISTS "Permitir actualizar libros" ON public.libros;
+DROP POLICY IF EXISTS "Solo administradores autenticados pueden actualizar" ON public.libros;
+CREATE POLICY "Solo administradores autenticados pueden actualizar" 
 ON public.libros 
 FOR UPDATE 
+TO authenticated
 USING (true);
 
--- Permitir eliminar libros
-CREATE POLICY "Permitir eliminar libros" 
+-- REGLA 4: Solo usuarios AUTENTICADOS pueden eliminar libros
+DROP POLICY IF EXISTS "Permitir eliminar libros" ON public.libros;
+DROP POLICY IF EXISTS "Solo administradores autenticados pueden eliminar" ON public.libros;
+CREATE POLICY "Solo administradores autenticados pueden eliminar" 
 ON public.libros 
 FOR DELETE 
+TO authenticated
 USING (true);
 
 -- 4. Opcional: Insertar los 18 libros iniciales de la biblioteca
