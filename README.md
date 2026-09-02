@@ -84,27 +84,7 @@ La aplicación funciona inmediatamente en **Modo Local** (utilizando `localStora
 
 ---
 
-## 💻 Instalación y Uso Local
 
-No requiere NodeJS, gestores de paquetes (`npm`/`yarn`) ni servidores complejos.
-
-1. **Clonar o descargar la carpeta del proyecto:**
-   ```bash
-   git clone https://github.com/JulianFVasquez1/humboldt_biblioteca.git
-   ```
-2. **Abrir el proyecto:**
-   - Haz doble clic en `index.html` para abrirlo en cualquier navegador (Chrome, Edge, Firefox, Safari).
-   - O usa una extensión como *Live Server* en VS Code.
-
----
-
-## 🔐 Clave de Administrador
-
-Para acceder al modo administrador (agregar, editar, eliminar libros o cambiar copias):
-- Haz clic en **"Admin"** en la barra superior.
-- Contraseña por defecto: `admin123` (o `humboldt2025`).
-
----
 
 ## 🏫 Colegio Humboldt
 
