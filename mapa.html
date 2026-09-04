@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mapa Interactivo de la Biblioteca - Colegio Humboldt</title>
+    <link rel="icon" type="image/png" href="images/logo_bgn.png">
+
+    <!-- Google Fonts & Iconografía Stitch -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; }
+        }
+        ::-webkit-scrollbar { display: none; }
+
+        /* Estilo del Mapa Arquitectónico Fiel a la Referencia */
+        .map-outer-container {
+            background-color: #ffffff;
+            background-image: radial-gradient(#d1d3df 1px, transparent 1px);
+            background-size: 16px 16px;
+            border: 2px dashed #b8bac9;
+            border-radius: 28px;
+            position: relative;
+            user-select: none;
+        }
+
+        .zone-card-bg {
+            background-color: #f1eff8;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Estanterías Interactivas */
+        .shelf-box {
+            background: #ffffff;
+            border: 1px solid #e2e1ec;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(11, 11, 94, 0.05);
+            font-weight: 700;
+            color: #191c1f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .shelf-box:hover {
+            transform: translateY(-2px);
+            border-color: #4647d7;
+            box-shadow: 0 6px 16px rgba(70, 71, 215, 0.2);
+            color: #0b0b5e;
+        }
+
+        .shelf-box.active-shelf {
+            background: linear-gradient(135deg, #040061 0%, #1a1a80 100%) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+            box-shadow: 0 10px 24px rgba(4, 0, 97, 0.45) !important;
+            transform: scale(1.05);
+            z-index: 20;
+        }
+
+        .shelf-box.active-shelf::after {
+            content: '★';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3b82f6;
+            color: #ffffff;
+            font-size: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.6);
+            animation: bounceIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translateX(-50%) scale(0); }
+            80% { transform: translateX(-50%) scale(1.2); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        /* Ruta Animada SVG */
+        .route-path-animated {
+            fill: none !important;
+            stroke: #3b82f6;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 6 6;
+            animation: dashMove 1s linear infinite;
+            filter: drop-shadow(0 2px 6px rgba(59, 130, 246, 0.5));
+        }
+
+        @keyframes dashMove {
+            to {
+                stroke-dashoffset: -24;
+            }
+        }
+
+        .table-circle {
+            background: #f8f9fd;
+            border: 2px solid #e1e2e8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            position: relative;
+        }
+
+        .chair-dot {
+            width: 9px;
+            height: 9px;
+            background: #b5b7c6;
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#040061",
+                        "primary-container": "#0b0b5e",
+                        "on-primary": "#ffffff",
+                        "secondary": "#4647d7",
+                        "secondary-container": "#6062f1",
+                        "secondary-fixed": "#e1e0ff",
+                        "on-secondary-fixed": "#07006c",
+                        "surface": "#f8f9fd",
+                        "surface-dim": "#d9dade",
+                        "surface-bright": "#f8f9fd",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f3f7",
+                        "surface-container": "#edeef2",
+                        "surface-container-high": "#e7e8ec",
+                        "surface-container-highest": "#e1e2e6",
+                        "on-surface": "#191c1f",
+                        "on-surface-variant": "#464651",
+                        "outline": "#777682",
+                        "outline-variant": "#c7c5d2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-surface font-sans text-on-surface antialiased min-h-screen pb-16 md:pb-0">
+
+    <!-- ===== HEADER NAVEGACIÓN ===== -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-primary-container/90 backdrop-blur-md border-b border-white/10 shadow-[0_4px_20px_rgba(4,0,97,0.3)] transition-all">
+        <div class="h-22 md:h-24 max-w-[1280px] mx-auto px-4 md:px-8 flex items-center justify-between gap-4">
+            
+            <!-- Logo Institucional -->
+            <div class="flex items-center gap-4">
+                <a class="flex items-center group focus:outline-none py-1" href="index.html" title="Inicio - Biblioteca Humboldt">
+                    <img alt="Biblioteca Humboldt" class="h-14 md:h-16 w-auto object-contain transition-transform group-hover:scale-105 brightness-0 invert" src="images/logo_bgn.png" />
+                </a>
+            </div>
+
+            <!-- Menú Desktop -->
+            <nav class="hidden md:flex items-center gap-1 p-1 bg-white/10 backdrop-blur-md rounded-full border border-white/15">
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors" href="index.html">Inicio</a>
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors" href="catalogo.html">Catálogo</a>
+                <a aria-current="page" class="px-5 py-2 transition-all bg-white text-primary-container font-bold rounded-full text-sm shadow-md" href="mapa.html">Mapa</a>
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors" href="index.html#informacion">Información</a>
+            </nav>
+
+            <!-- Acceso Admin -->
+            <div class="flex items-center gap-3">
+                <a class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-white/15 text-white hover:bg-white hover:text-primary-container transition-all shadow-sm border border-white/20" href="admin.html">
+                    <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full pt-28 bg-surface">
+        <div class="max-w-[1280px] w-full mx-auto px-4 md:px-8 py-8 flex flex-col gap-6">
+            
+            <!-- Encabezado de la página -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-secondary text-xs font-bold uppercase tracking-wider mb-1">
+                        <span class="material-symbols-outlined text-[16px]">explore</span>
+                        <span>Mapa Interactivo</span>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-primary-container tracking-tight">Mapa de Estanterías</h1>
+                    <p class="text-sm text-on-surface-variant max-w-xl mt-1">Haz clic en cualquier estantería para trazar la ruta de navegación desde la entrada y consultar su inventario en tiempo real.</p>
+                </div>
+
+                <!-- Selector rápido de Zonas -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="seleccionarEstanteriaDirecta('A1')" id="btnPillZonaA" class="px-4 py-2 rounded-full text-xs font-bold bg-secondary-fixed text-on-secondary-fixed shadow-sm hover:scale-105 transition-all">
+                        Zona A (Literatura)
+                    </button>
+                    <button onclick="seleccionarEstanteriaDirecta('C1')" id="btnPillZonaC" class="px-4 py-2 rounded-full text-xs font-bold bg-surface-container-lowest text-primary-container border border-outline-variant/40 hover:bg-surface-container transition-all">
+                        Zona C (Ciencias)
+                    </button>
+                    <button onclick="seleccionarEstanteriaDirecta('B1')" id="btnPillZonaB" class="px-4 py-2 rounded-full text-xs font-bold bg-surface-container-lowest text-primary-container border border-outline-variant/40 hover:bg-surface-container transition-all">
+                        Zona B (Historia)
+                    </button>
+                    <button onclick="seleccionarEstanteriaDirecta('D1')" id="btnPillZonaD" class="px-4 py-2 rounded-full text-xs font-bold bg-surface-container-lowest text-primary-container border border-outline-variant/40 hover:bg-surface-container transition-all">
+                        Zona D (Matemáticas)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenedor Principal: Plano Arquitectónico Exacto + Inspector Lateral -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Plano Arquitectónico Fiel (7 Columnas) -->
+                <div class="lg:col-span-7 bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/30 shadow-md flex flex-col gap-4">
+                    
+                    <div class="flex items-center justify-between pb-2 border-b border-outline-variant/20">
+                        <div class="flex items-center gap-2 text-xs font-bold text-primary-container">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Distribución de la biblioteca </span>
+                        </div>
+                        <span class="text-xs font-semibold text-secondary" id="activeShelfLabel">Estantería Seleccionada: A1</span>
+                    </div>
+
+                    <!-- Lienzo Visual del Mapa -->
+                    <div class="map-outer-container p-6 md:p-8 flex flex-col justify-between items-center gap-6 min-h-[560px]" id="mapLienzo">
+                        
+                        <!-- SVG Overlay para Rutas Animadas -->
+                        <svg id="svgRouteCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-10" style="overflow: visible;">
+                            <path id="activeRoutePath" fill="none" class="route-path-animated" d="M 0 0" />
+                        </svg>
+
+                        <!-- 1. ZONA C · CIENCIAS Y TECNOLOGÍA (Arriba) -->
+                        <div class="zone-card-bg w-full max-w-[540px] p-4 flex flex-col items-center gap-2.5">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-primary-container font-serif">ZONA C · CIENCIAS Y TECNOLOGÍA</span>
+                            <div class="grid grid-cols-5 gap-2.5 w-full">
+                                <button class="shelf-box h-14 text-sm" id="shelf-C1" onclick="seleccionarEstanteriaDirecta('C1')">C1</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-C2" onclick="seleccionarEstanteriaDirecta('C2')">C2</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-C3" onclick="seleccionarEstanteriaDirecta('C3')">C3</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-C4" onclick="seleccionarEstanteriaDirecta('C4')">C4</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-C5" onclick="seleccionarEstanteriaDirecta('C5')">C5</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. FILA INTERMEDIA: ZONA B (Izq) + SALA DE LECTURA Y COMPUTADORES (Centro) + ZONA D (Der) -->
+                        <div class="w-full grid grid-cols-12 gap-4 items-center">
+                            
+                            <!-- ZONA B · Cs. Sociales & Historia -->
+                            <div class="col-span-3 zone-card-bg p-3.5 flex flex-col items-center gap-2">
+                                <div class="text-center">
+                                    <span class="text-xs font-extrabold text-primary-container block leading-tight">ZONA B</span>
+                                    <span class="text-[9px] text-on-surface-variant font-medium block">Cs. Sociales & Historia</span>
+                                </div>
+                                <div class="flex flex-col gap-1.5 w-full">
+                                    <button class="shelf-box h-8 text-xs" id="shelf-B1" onclick="seleccionarEstanteriaDirecta('B1')">B1</button>
+                                    <button class="shelf-box h-8 text-xs" id="shelf-B2" onclick="seleccionarEstanteriaDirecta('B2')">B2</button>
+                                    <button class="shelf-box h-8 text-xs" id="shelf-B3" onclick="seleccionarEstanteriaDirecta('B3')">B3</button>
+                                    <button class="shelf-box h-8 text-xs" id="shelf-B4" onclick="seleccionarEstanteriaDirecta('B4')">B4</button>
+                                    <button class="shelf-box h-8 text-xs" id="shelf-B5" onclick="seleccionarEstanteriaDirecta('B5')">B5</button>
+                                </div>
+                            </div>
+
+                            <!-- CENTRO: Sala de lectura (Mesas redondas) + Módulo Computadores -->
+                            <div class="col-span-6 flex flex-col items-center justify-center gap-4 py-2">
+                                
+                                <!-- Mesas Redondas con Sillas -->
+                                <div class="flex items-center justify-center gap-6">
+                                    <!-- Mesa 1 -->
+                                    <div class="table-circle w-14 h-14">
+                                        <div class="chair-dot -top-2 left-1/2 -translate-x-1/2"></div>
+                                        <div class="chair-dot -bottom-2 left-1/2 -translate-x-1/2"></div>
+                                        <div class="chair-dot -left-2 top-1/2 -translate-y-1/2"></div>
+                                        <div class="chair-dot -right-2 top-1/2 -translate-y-1/2"></div>
+                                    </div>
+                                    <!-- Mesa 2 -->
+                                    <div class="table-circle w-14 h-14">
+                                        <div class="chair-dot -top-2 left-1/2 -translate-x-1/2"></div>
+                                        <div class="chair-dot -bottom-2 left-1/2 -translate-x-1/2"></div>
+                                        <div class="chair-dot -left-2 top-1/2 -translate-y-1/2"></div>
+                                        <div class="chair-dot -right-2 top-1/2 -translate-y-1/2"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Badge Sala de lectura -->
+                                <span class="px-3 py-1 rounded-full bg-surface-container-high/80 text-primary-container text-[11px] font-semibold border border-outline-variant/30 shadow-xs">
+                                    Sala de lectura
+                                </span>
+
+                                <!-- Módulo Computadores -->
+                                <div class="p-2 px-4 rounded-xl bg-surface-container-low border border-outline-variant/30 flex flex-col items-center gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-4 h-2.5 bg-secondary rounded-xs"></span>
+                                        <span class="w-4 h-2.5 bg-secondary rounded-xs"></span>
+                                        <span class="w-4 h-2.5 bg-secondary rounded-xs"></span>
+                                    </div>
+                                    <span class="text-[10px] font-medium text-on-surface-variant">Módulo Computadores (12)</span>
+                                </div>
+
+                            </div>
+
+                            <!-- ZONA D · Referencia & Hemeroteca -->
+                            <div class="col-span-3 zone-card-bg p-3.5 flex flex-col items-center gap-2">
+                                <div class="text-center">
+                                    <span class="text-xs font-extrabold text-primary-container block leading-tight">ZONA D</span>
+                                    <span class="text-[9px] text-on-surface-variant font-medium block">Referencia & Hemeroteca</span>
+                                </div>
+                                <div class="flex flex-col gap-1.5 w-full">
+                                    <button class="shelf-box h-8 text-xs" id="shelf-D1" onclick="seleccionarEstanteriaDirecta('D1')">D1</button>
+                                    <button class="shelf-box h-8 text-xs" id="shelf-D2" onclick="seleccionarEstanteriaDirecta('D2')">D2</button>
+                                    <button class="shelf-box h-8 text-xs" id="shelf-D3" onclick="seleccionarEstanteriaDirecta('D3')">D3</button>
+                                    <button class="shelf-box h-8 text-xs" id="shelf-D4" onclick="seleccionarEstanteriaDirecta('D4')">D4</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- 3. ZONA A · LITERATURA Y ARTE (Abajo) -->
+                        <div class="zone-card-bg w-full max-w-[540px] p-4 flex flex-col items-center gap-2.5">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-primary-container font-serif">ZONA A · LITERATURA Y ARTE</span>
+                            <div class="grid grid-cols-5 gap-2.5 w-full">
+                                <button class="shelf-box h-14 text-sm" id="shelf-A1" onclick="seleccionarEstanteriaDirecta('A1')">A1</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-A2" onclick="seleccionarEstanteriaDirecta('A2')">A2</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-A3" onclick="seleccionarEstanteriaDirecta('A3')">A3</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-A4" onclick="seleccionarEstanteriaDirecta('A4')">A4</button>
+                                <button class="shelf-box h-14 text-sm" id="shelf-A5" onclick="seleccionarEstanteriaDirecta('A5')">A5</button>
+                            </div>
+                        </div>
+
+                        <!-- 4. ENTRADA PRINCIPAL -->
+                        <div class="relative z-20" id="entrancePoint">
+                            <div class="px-5 py-1.5 rounded-full bg-primary text-white font-bold text-xs flex items-center gap-1.5 shadow-md border-2 border-white">
+                                <span>Entrada</span>
+                                <span class="text-[14px]">↑</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs text-on-surface-variant pt-2">
+                        <span>💡 Haz clic en cualquier estantería (A1..D4) para trazar la ruta de acceso.</span>
+                        <span class="font-bold text-primary">Humboldt · Sogamoso</span>
+                    </div>
+
+                </div>
+
+                <!-- Inspector Lateral: Libros en la Estantería (5 Columnas) -->
+                <div class="lg:col-span-5 flex flex-col gap-4">
+                    
+                    <div class="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/30 shadow-md flex flex-col gap-4">
+                        
+                        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-secondary"></span>
+                                    <h3 id="panelEstanteriaTitulo" class="text-xl font-bold text-primary-container">Estantería A1</h3>
+                                </div>
+                                <p id="panelEstanteriaSubtitulo" class="text-xs text-on-surface-variant font-medium mt-0.5">Literatura y Clásicos Latinoamericanos</p>
+                            </div>
+                            <span id="panelEstanteriaConteo" class="px-3 py-1 bg-secondary-fixed text-on-secondary-fixed font-bold text-xs rounded-full">
+                                0 libros
+                            </span>
+                        </div>
+
+                        <!-- Información de Ubicación Física -->
+                        <div class="p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs flex flex-col gap-1">
+                            <div class="flex justify-between">
+                                <span class="text-on-surface-variant">Zona General:</span>
+                                <strong id="panelZonaGeneral" class="text-primary-container font-bold">Zona A · Literatura y Arte</strong>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-on-surface-variant">Código Topográfico:</span>
+                                <strong id="panelCodigoTopografico" class="text-primary-container font-mono font-bold">Est. A1 · 01</strong>
+                            </div>
+                        </div>
+
+                        <!-- Lista Dinámica de Libros en esta Estantería -->
+                        <div class="flex flex-col gap-3 max-h-[480px] overflow-y-auto pr-1" id="listaLibrosEstanteria">
+                            <!-- Se inyecta dinámicamente con app-core.js -->
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="w-full bg-primary text-white py-8 px-4 md:px-8 mt-12">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <img src="images/logo_bgn.png" alt="Biblioteca Humboldt" class="h-8 w-auto brightness-0 invert opacity-90" />
+                <span class="text-xs text-white/80">© 2026 Biblioteca Humboldt · Colegio Humboldt de Sogamoso.</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-white/80">
+                <a href="index.html" class="hover:text-white">Inicio</a>
+                <a href="catalogo.html" class="hover:text-white">Catálogo</a>
+                <a href="admin.html" class="hover:text-white">Administración</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== BOTTOM NAV (MÓVIL RESPONSIVE) ===== -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/40 flex items-center justify-around z-50 shadow-lg">
+        <a href="index.html" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">home</span>
+            <span>Inicio</span>
+        </a>
+        <a href="catalogo.html" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">menu_book</span>
+            <span>Catálogo</span>
+        </a>
+        <a href="mapa.html" class="flex flex-col items-center gap-1 text-primary font-bold text-[11px]">
+            <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">explore</span>
+            <span>Mapa</span>
+        </a>
+        <a href="admin.html" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
+            <span>Admin</span>
+        </a>
+    </nav>
+
+    <!-- Supabase CDN Client & Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.config.js"></script>
+    <script src="app-core.js"></script>
+
+    <script>
+        const SHELVES_DATA = {
+            'A1': { zona: 'Zona A · Literatura y Arte', subtitulo: 'Literatura Clásica y Narrativa Latinoamericana' },
+            'A2': { zona: 'Zona A · Literatura y Arte', subtitulo: 'Literatura Universal y Novelas Clásicas' },
+            'A3': { zona: 'Zona A · Literatura y Arte', subtitulo: 'Arte, Cultura, Poesía y Ensayos' },
+            'A4': { zona: 'Zona A · Literatura y Arte', subtitulo: 'Ficción, Distopías y Literatura Juvenil' },
+            'A5': { zona: 'Zona A · Literatura y Arte', subtitulo: 'Teatro, Cuentos y Obras Premiadas' },
+
+            'B1': { zona: 'Zona B · Cs. Sociales & Historia', subtitulo: 'Historia Universal y Civilizaciones Antiguas' },
+            'B2': { zona: 'Zona B · Cs. Sociales & Historia', subtitulo: 'Física Clásica, Astronomía y Cosmología' },
+            'B3': { zona: 'Zona B · Cs. Sociales & Historia', subtitulo: 'Tecnología, Algoritmos y Programación' },
+            'B4': { zona: 'Zona B · Cs. Sociales & Historia', subtitulo: 'Geografía, Antropología y Sociedad' },
+            'B5': { zona: 'Zona B · Cs. Sociales & Historia', subtitulo: 'Economía, Política y Sociología' },
+
+            'C1': { zona: 'Zona C · Ciencias y Tecnología', subtitulo: 'Filosofía Occidental y Pensamiento Crítico' },
+            'C2': { zona: 'Zona C · Ciencias y Tecnología', subtitulo: 'Filosofía Clásica y Diálogos Griegos' },
+            'C3': { zona: 'Zona C · Ciencias y Tecnología', subtitulo: 'Estrategia, Historia Militar y Biografías' },
+            'C4': { zona: 'Zona C · Ciencias y Tecnología', subtitulo: 'Química, Biología y Ciencias de la Vida' },
+            'C5': { zona: 'Zona C · Ciencias y Tecnología', subtitulo: 'Ecología, Medio Ambiente y Botánica' },
+
+            'D1': { zona: 'Zona D · Referencia & Hemeroteca', subtitulo: 'Cálculo Diferencial, Integral y Álgebra Lineal' },
+            'D2': { zona: 'Zona D · Referencia & Hemeroteca', subtitulo: 'Geometría, Estadística y Probabilidad' },
+            'D3': { zona: 'Zona D · Referencia & Hemeroteca', subtitulo: 'Diccionarios, Atlas y Enciclopedias' },
+            'D4': { zona: 'Zona D · Referencia & Hemeroteca', subtitulo: 'Publicaciones Periódicas y Revistas Científicas' }
+        };
+
+        let estanteriaActiva = 'A1';
+
+        function seleccionarEstanteriaDirecta(shelfId) {
+            if (!shelfId) shelfId = 'A1';
+            shelfId = String(shelfId).toUpperCase().trim();
+            const matchExact = shelfId.match(/([A-D][1-5])/);
+            if (matchExact) {
+                shelfId = matchExact[1];
+            } else {
+                const matchLetra = shelfId.match(/([A-D])/);
+                shelfId = matchLetra ? `${matchLetra[1]}1` : 'A1';
+            }
+            if (!SHELVES_DATA[shelfId]) {
+                shelfId = 'A1';
+            }
+
+            estanteriaActiva = shelfId;
+
+            // Desmarcar todas las estanterías
+            document.querySelectorAll('.shelf-box').forEach(el => el.classList.remove('active-shelf'));
+
+            // Marcar estantería seleccionada
+            const targetEl = document.getElementById(`shelf-${shelfId}`);
+            if (targetEl) {
+                targetEl.classList.add('active-shelf');
+            }
+
+            // Actualizar etiquetas del panel
+            const info = SHELVES_DATA[shelfId] || SHELVES_DATA['A1'];
+            document.getElementById('activeShelfLabel').textContent = `Estantería Seleccionada: ${shelfId}`;
+            document.getElementById('panelEstanteriaTitulo').textContent = `Estantería ${shelfId}`;
+            document.getElementById('panelEstanteriaSubtitulo').textContent = info.subtitulo;
+            document.getElementById('panelZonaGeneral').textContent = info.zona;
+            document.getElementById('panelCodigoTopografico').textContent = `Est. ${shelfId} · 01`;
+
+            // Actualizar botones superiores de zona
+            const letraZona = shelfId.charAt(0);
+            ['A', 'B', 'C', 'D'].forEach(z => {
+                const btn = document.getElementById(`btnPillZona${z}`);
+                if (btn) {
+                    if (z === letraZona) {
+                        btn.className = "px-4 py-2 rounded-full text-xs font-bold bg-secondary-fixed text-on-secondary-fixed shadow-sm hover:scale-105 transition-all";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-full text-xs font-bold bg-surface-container-lowest text-primary-container border border-outline-variant/40 hover:bg-surface-container transition-all";
+                    }
+                }
+            });
+
+            // Trazar Ruta Animada desde la Entrada
+            trazarRutaDesdeEntrada(targetEl);
+
+            // Cargar Libros Reales para esta estantería
+            cargarLibrosEstanteria(shelfId);
+        }
+
+        function trazarRutaDesdeEntrada(targetEl) {
+            const lienzo = document.getElementById('mapLienzo');
+            const entrada = document.getElementById('entrancePoint');
+            const routePath = document.getElementById('activeRoutePath');
+
+            if (!lienzo || !entrada || !targetEl || !routePath) return;
+
+            const rectLienzo = lienzo.getBoundingClientRect();
+            const rectEntrada = entrada.getBoundingClientRect();
+            const rectTarget = targetEl.getBoundingClientRect();
+
+            // Puntos relativos al lienzo
+            const startX = (rectEntrada.left + rectEntrada.width / 2) - rectLienzo.left;
+            const startY = rectEntrada.top - rectLienzo.top;
+
+            const endX = (rectTarget.left + rectTarget.width / 2) - rectLienzo.left;
+            const endY = (rectTarget.top + rectTarget.height / 2) - rectLienzo.top;
+
+            // Trazar línea quebrada arquitectónica
+            let d = '';
+            if (estanteriaActiva.startsWith('A')) {
+                // Zona A (Abajo): Línea directa
+                const midY = startY - 20;
+                d = `M ${startX} ${startY} L ${startX} ${midY} L ${endX} ${midY} L ${endX} ${endY + 25}`;
+            } else if (estanteriaActiva.startsWith('C')) {
+                // Zona C (Arriba): Pasa por el pasillo central
+                const midX = startX;
+                const midY = endY + 45;
+                d = `M ${startX} ${startY} L ${midX} 260 L ${endX} 260 L ${endX} ${endY + 25}`;
+            } else if (estanteriaActiva.startsWith('B')) {
+                // Zona B (Izquierda)
+                d = `M ${startX} ${startY} L ${startX} 380 L ${endX + 35} 380 L ${endX + 35} ${endY} L ${endX} ${endY}`;
+            } else if (estanteriaActiva.startsWith('D')) {
+                // Zona D (Derecha)
+                d = `M ${startX} ${startY} L ${startX} 380 L ${endX - 35} 380 L ${endX - 35} ${endY} L ${endX} ${endY}`;
+            } else {
+                d = `M ${startX} ${startY} L ${endX} ${endY}`;
+            }
+
+            routePath.setAttribute('d', d);
+        }
+
+        function cargarLibrosEstanteria(shelfId) {
+            const todos = obtenerTodosLosLibros();
+            const container = document.getElementById('listaLibrosEstanteria');
+            const badgeConteo = document.getElementById('panelEstanteriaConteo');
+
+            const letra = shelfId.charAt(0);
+
+            // Filtrar libros que coincidan con la estantería o con la zona
+            const libros = todos.filter(l => {
+                if (!l.ubicacion) return false;
+                const cod = (l.ubicacion.codigo || '').toUpperCase();
+                const est = (l.ubicacion.estanteria || '').toUpperCase();
+                return cod.includes(`EST. ${shelfId}`) || cod.includes(`EST. ${letra}`) || est.includes(`ESTANTERÍA ${letra}`) || est.includes(`ZONA ${letra}`);
+            });
+
+            badgeConteo.textContent = `${libros.length} libros`;
+            container.innerHTML = '';
+
+            if (libros.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-on-surface-variant text-xs">
+                        <span class="material-symbols-outlined text-[32px] text-outline mb-1">inventory_2</span>
+                        <p>No hay libros registrados en la estantería ${shelfId} actualmente.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            libros.forEach(libro => {
+                const total = typeof libro.copiasTotal === 'number' ? libro.copiasTotal : 1;
+                const disp = typeof libro.copiasDisponibles === 'number' ? libro.copiasDisponibles : (libro.estado === 'Disponible' ? 1 : 0);
+                const isDisponible = disp > 0;
+
+                const card = document.createElement('a');
+                card.href = `detalle.html?id=${libro.id}`;
+                card.className = "p-3 bg-surface-container-low hover:bg-white rounded-2xl border border-outline-variant/30 hover:border-secondary hover:shadow-md transition-all flex items-center gap-3.5 group";
+                card.innerHTML = `
+                    <img src="${libro.imagen || 'images/cover-1.jpg'}" alt="${escapeHTML(libro.titulo)}" class="w-12 aspect-[2/3] object-cover rounded-lg shadow-xs shrink-0" onerror="this.src='images/cover-1.jpg'">
+                    <div class="flex flex-col flex-1 min-w-0">
+                        <span class="text-[10px] font-bold text-secondary uppercase">${escapeHTML(libro.categoria)}</span>
+                        <h4 class="text-xs font-bold text-primary-container group-hover:text-secondary transition-colors truncate">${escapeHTML(libro.titulo)}</h4>
+                        <span class="text-[11px] text-on-surface-variant truncate">${escapeHTML(libro.autor)}</span>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[10px] font-bold ${isDisponible ? 'text-emerald-700' : 'text-rose-700'}">${isDisponible ? `${disp} de ${total} disp.` : 'Agotado'}</span>
+                            <span class="text-[10px] text-on-surface-variant font-mono bg-surface-container px-2 py-0.5 rounded-full">${libro.ubicacion ? (libro.ubicacion.codigo || libro.ubicacion.nivel) : ''}</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-secondary transition-colors shrink-0">chevron_right</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            const activeEl = document.getElementById(`shelf-${estanteriaActiva}`);
+            if (activeEl) trazarRutaDesdeEntrada(activeEl);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shelfParam = urlParams.get('shelf') || urlParams.get('estanteria') || urlParams.get('zona') || 'A1';
+
+            setTimeout(() => {
+                seleccionarEstanteriaDirecta(shelfParam);
+            }, 100);
+
+            window.addEventListener('datosCargados', () => {
+                seleccionarEstanteriaDirecta(estanteriaActiva);
+            });
+        });
+    </script>
+</body>
+</html>

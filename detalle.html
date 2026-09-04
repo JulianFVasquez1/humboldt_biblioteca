@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ficha Técnica del Libro - Biblioteca Humboldt</title>
+    <link rel="icon" type="image/png" href="images/logo_bgn.png">
+
+    <!-- Google Fonts & Iconografía Stitch -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; }
+        }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#040061",
+                        "primary-container": "#0b0b5e",
+                        "on-primary": "#ffffff",
+                        "secondary": "#4647d7",
+                        "secondary-container": "#6062f1",
+                        "secondary-fixed": "#e1e0ff",
+                        "on-secondary-fixed": "#07006c",
+                        "surface": "#f8f9fd",
+                        "surface-dim": "#d9dade",
+                        "surface-bright": "#f8f9fd",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f3f7",
+                        "surface-container": "#edeef2",
+                        "surface-container-high": "#e7e8ec",
+                        "surface-container-highest": "#e1e2e6",
+                        "on-surface": "#191c1f",
+                        "on-surface-variant": "#464651",
+                        "outline": "#777682",
+                        "outline-variant": "#c7c5d2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-surface font-sans text-on-surface antialiased min-h-screen pb-16 md:pb-0">
+
+    <!-- ===== HEADER NAVEGACIÓN ===== -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-primary-container/90 backdrop-blur-md border-b border-white/10 shadow-[0_4px_20px_rgba(4,0,97,0.3)] transition-all">
+        <div class="h-22 md:h-24 max-w-[1280px] mx-auto px-4 md:px-8 flex items-center justify-between gap-4">
+            
+            <!-- Logo Institucional -->
+            <div class="flex items-center gap-4">
+                <a class="flex items-center group focus:outline-none py-1" href="index.html" title="Inicio - Biblioteca Humboldt">
+                    <img alt="Biblioteca Humboldt" class="h-14 md:h-16 w-auto object-contain transition-transform group-hover:scale-105 brightness-0 invert" src="images/logo_bgn.png" />
+                </a>
+            </div>
+
+            <!-- Menú Desktop -->
+            <nav class="hidden md:flex items-center gap-1 p-1 bg-white/10 backdrop-blur-md rounded-full border border-white/15">
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors" href="index.html">Inicio</a>
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors" href="catalogo.html">Catálogo</a>
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors" href="mapa.html">Mapa</a>
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors" href="index.html#informacion">Información</a>
+            </nav>
+
+            <!-- Acceso Admin -->
+            <div class="flex items-center gap-3">
+                <a class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-white/15 text-white hover:bg-white hover:text-primary-container transition-all shadow-sm border border-white/20" href="admin.html">
+                    <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full pt-28 bg-surface">
+        <div class="max-w-[1280px] w-full mx-auto px-4 md:px-8 py-8 flex flex-col gap-6">
+            
+            <!-- Breadcrumbs -->
+            <nav aria-label="Ruta de navegación" class="flex items-center gap-2 text-xs font-semibold text-on-surface-variant">
+                <a href="catalogo.html" class="hover:text-secondary flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">menu_book</span>
+                    <span>Catálogo</span>
+                </a>
+                <span class="text-outline-variant">/</span>
+                <span id="breadcrumbCat" class="hover:text-secondary cursor-pointer">Literatura</span>
+                <span class="text-outline-variant">/</span>
+                <span id="breadcrumbTitulo" class="text-primary-container truncate font-bold">Cargando...</span>
+            </nav>
+
+            <!-- Layout Ficha del Libro (2 Columnas) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Columna Izquierda: Portada y Acceso Rápido al Mapa -->
+                <div class="lg:col-span-4 flex flex-col items-center sticky top-24">
+                    <div class="w-full max-w-[360px] bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-md flex flex-col items-center">
+                        
+                        <!-- Portada 2:3 en Alta Resolución -->
+                        <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-xl bg-primary-container group mb-4">
+                            <img id="libroPortadaImg" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="images/cover-1.jpg" alt="Portada de libro" onerror="this.src='images/cover-1.jpg'">
+                            <span id="libroRibbonBadge" class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-600 text-white shadow-md">
+                                Disponible
+                            </span>
+                        </div>
+
+                        <!-- Coordenadas Físicas Destacadas -->
+                        <div class="w-full bg-surface-container-low rounded-xl p-4 flex flex-col gap-2 border border-outline-variant/20">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px] text-secondary">explore</span>
+                                    Ubicación en Sala
+                                </span>
+                                <span id="libroCodigoTopografico" class="text-xs font-bold text-primary px-2 py-0.5 bg-white rounded-full shadow-xs">Est. A1 · 03</span>
+                            </div>
+                            
+                            <div class="text-xs text-on-surface-variant flex flex-col gap-0.5 mt-1">
+                                <span id="libroEstanteriaText">Estantería: <strong>Estantería A</strong></span>
+                                <span id="libroSeccionText">Sección: <strong>Literatura Juvenil</strong></span>
+                                <span id="libroNivelText">Nivel: <strong>Nivel 2</strong></span>
+                            </div>
+
+                            <a id="btnVerEnMapa" href="mapa.html" class="mt-2 w-full py-2.5 bg-primary-container hover:bg-secondary text-white text-xs font-bold rounded-full transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px]">map</span>
+                                <span>Ver ubicación en el Mapa</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Información, Disponibilidad y Pestañas -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    
+                    <!-- Tarjeta Principal de Información -->
+                    <div class="bg-surface-container-lowest p-6 md:p-8 rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col gap-4">
+                        
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <span id="libroCategoriaBadge" class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-xs font-bold tracking-wide uppercase inline-flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[14px]">local_library</span>
+                                Literatura
+                            </span>
+                            <span id="libroAnioBadge" class="text-xs font-semibold text-on-surface-variant flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                Año: 1943
+                            </span>
+                        </div>
+
+                        <!-- Título y Autor -->
+                        <div>
+                            <h1 id="libroTitulo" class="text-2xl md:text-4xl font-extrabold text-primary-container tracking-tight leading-tight">
+                                Cargando...
+                            </h1>
+                            <p class="text-base font-medium text-on-surface-variant mt-1 flex items-center gap-1.5">
+                                <span>por</span>
+                                <span id="libroAutor" class="font-bold text-primary hover:text-secondary cursor-pointer transition-colors">Autor</span>
+                            </p>
+                        </div>
+
+                        <!-- Caja de Disponibilidad en Tiempo Real -->
+                        <div id="libroStatusBox" class="p-4 rounded-xl bg-emerald-50 border border-emerald-200/50 flex items-center justify-between flex-wrap gap-3">
+                            <div class="flex items-center gap-3">
+                                <span id="libroStatusDot" class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                <div class="flex flex-col">
+                                    <span id="libroStatusTitle" class="text-sm font-bold text-emerald-900">Disponible para Consulta y Préstamo</span>
+                                    <span id="libroStatusSubtitle" class="text-xs text-emerald-800/90">Puedes solicitar este ejemplar directamente en el mostrador de la biblioteca.</span>
+                                </div>
+                            </div>
+                            <span id="libroCopiasBadge" class="px-3 py-1 rounded-full bg-white text-emerald-800 text-xs font-bold shadow-xs">
+                                3 de 4 ejemplares disponibles
+                            </span>
+                        </div>
+
+                        <!-- Metadatos Rápidos en Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-outline-variant/20 text-xs">
+                            <div class="p-3 bg-surface-container-low rounded-xl">
+                                <span class="text-on-surface-variant block font-medium">Editorial</span>
+                                <strong id="libroEditorial" class="text-primary-container font-bold mt-0.5 block">Salamandra</strong>
+                            </div>
+                            <div class="p-3 bg-surface-container-low rounded-xl">
+                                <span class="text-on-surface-variant block font-medium">ISBN</span>
+                                <strong id="libroIsbn" class="text-primary-container font-bold mt-0.5 block font-mono">978-0156012195</strong>
+                            </div>
+                            <div class="p-3 bg-surface-container-low rounded-xl">
+                                <span class="text-on-surface-variant block font-medium">Total Copias</span>
+                                <strong id="libroCopiasTotal" class="text-primary-container font-bold mt-0.5 block">4 Ejemplares</strong>
+                            </div>
+                            <div class="p-3 bg-surface-container-low rounded-xl">
+                                <span class="text-on-surface-variant block font-medium">Formato</span>
+                                <strong class="text-primary-container font-bold mt-0.5 block">Físico en Sala</strong>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Pestañas de Detalle (Descripción, Datos Técnicos, Normativa) -->
+                    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
+                        <div class="flex items-center gap-4 px-6 pt-4 bg-surface-container-low/50 border-b border-outline-variant/20">
+                            <button id="tabBtnDesc" onclick="cambiarTab('desc')" class="pb-3 font-bold text-sm text-primary-container border-b-2 border-primary-container transition-all">
+                                Sinopsis & Descripción
+                            </button>
+                            <button id="tabBtnFicha" onclick="cambiarTab('ficha')" class="pb-3 font-semibold text-sm text-on-surface-variant border-b-2 border-transparent hover:text-primary-container transition-all">
+                                Ficha Bibliográfica
+                            </button>
+                            <button id="tabBtnNormas" onclick="cambiarTab('normas')" class="pb-3 font-semibold text-sm text-on-surface-variant border-b-2 border-transparent hover:text-primary-container transition-all">
+                                Políticas de Préstamo
+                            </button>
+                        </div>
+
+                        <div class="p-6 md:p-8">
+                            <!-- Panel Descripción -->
+                            <div id="tabContentDesc" class="flex flex-col gap-3">
+                                <h3 class="text-base font-bold text-primary-container">Acerca de esta obra</h3>
+                                <p id="libroDescripcion" class="text-sm text-on-surface-variant leading-relaxed">
+                                    Cargando sinopsis de la obra...
+                                </p>
+                            </div>
+
+                            <!-- Panel Ficha Bibliográfica -->
+                            <div id="tabContentFicha" class="hidden flex flex-col gap-3 text-xs">
+                                <h3 class="text-base font-bold text-primary-container">Registro Catalográfico</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                    <div class="p-3 rounded-lg bg-surface-container-low flex justify-between">
+                                        <span class="text-on-surface-variant">Clasificación:</span>
+                                        <strong id="fichaCategoria">Literatura</strong>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-surface-container-low flex justify-between">
+                                        <span class="text-on-surface-variant">Código de Barras / ISBN:</span>
+                                        <strong id="fichaIsbn">978-0156012195</strong>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-surface-container-low flex justify-between">
+                                        <span class="text-on-surface-variant">Año de Edición:</span>
+                                        <strong id="fichaAnio">1943</strong>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-surface-container-low flex justify-between">
+                                        <span class="text-on-surface-variant">Casa Editorial:</span>
+                                        <strong id="fichaEditorial">Salamandra</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panel Normativa de Sala -->
+                            <div id="tabContentNormas" class="hidden flex flex-col gap-3 text-xs text-on-surface-variant leading-relaxed">
+                                <h3 class="text-base font-bold text-primary-container">Reglamento y Condiciones de Préstamo</h3>
+                                <ul class="list-disc pl-5 space-y-1 mt-1">
+                                    <li><strong>Préstamo en Sala:</strong> Disponible para todos los estudiantes y docentes durante el horario de biblioteca (7:00 AM a 4:00 PM).</li>
+                                    <li><strong>Préstamo a Domicilio:</strong> Hasta 2 ejemplares por estudiante durante un periodo máximo de 8 días calendario renovables.</li>
+                                    <li><strong>Cuidado de Ejemplares:</strong> Todo daño o pérdida debe ser reportado inmediatamente a la administración de la biblioteca.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Libros Relacionados en la misma categoría -->
+                    <div class="flex flex-col gap-4 mt-4">
+                        <h3 class="text-lg font-bold text-primary-container flex items-center gap-2">
+                            <span class="material-symbols-outlined text-secondary">recommend</span>
+                            Más libros en esta categoría
+                        </h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="librosRelacionadosGrid">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="w-full bg-primary text-white py-8 px-4 md:px-8 mt-12">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <img src="images/logo_bgn.png" alt="Biblioteca Humboldt" class="h-8 w-auto brightness-0 invert opacity-90" />
+                <span class="text-xs text-white/80">© 2026 Biblioteca Humboldt · Colegio Humboldt de Sogamoso.</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-white/80">
+                <a href="index.html" class="hover:text-white">Inicio</a>
+                <a href="catalogo.html" class="hover:text-white">Catálogo</a>
+                <a href="mapa.html" class="hover:text-white">Mapa</a>
+                <a href="admin.html" class="hover:text-white">Administración</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== BOTTOM NAV (MÓVIL RESPONSIVE) ===== -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/40 flex items-center justify-around z-50 shadow-lg">
+        <a href="index.html" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">home</span>
+            <span>Inicio</span>
+        </a>
+        <a href="catalogo.html" class="flex flex-col items-center gap-1 text-primary font-bold text-[11px]">
+            <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+            <span>Catálogo</span>
+        </a>
+        <a href="mapa.html" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">explore</span>
+            <span>Mapa</span>
+        </a>
+        <a href="admin.html" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
+            <span>Admin</span>
+        </a>
+    </nav>
+
+    <!-- Supabase CDN Client & Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.config.js"></script>
+    <script src="app-core.js"></script>
+
+    <script>
+        function cargarFichaLibro() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = parseInt(urlParams.get('id'), 10) || 1;
+            const libro = obtenerLibroPorId(bookId) || obtenerLibroPorId(1);
+
+            if (!libro) return;
+
+            document.title = `${libro.titulo} — Biblioteca Humboldt`;
+
+            // Breadcrumbs
+            document.getElementById('breadcrumbCat').textContent = libro.categoria;
+            document.getElementById('breadcrumbCat').onclick = () => window.location.href = `catalogo.html?cat=${encodeURIComponent(libro.categoria)}`;
+            document.getElementById('breadcrumbTitulo').textContent = libro.titulo;
+
+            // Datos Principales
+            document.getElementById('libroTitulo').textContent = libro.titulo;
+            document.getElementById('libroAutor').textContent = libro.autor;
+            document.getElementById('libroCategoriaBadge').innerHTML = `<span class="material-symbols-outlined text-[14px]">local_library</span> ${escapeHTML(libro.categoria)}`;
+            document.getElementById('libroAnioBadge').innerHTML = `<span class="material-symbols-outlined text-[14px]">calendar_today</span> Año: ${libro.anio || 'N/A'}`;
+            document.getElementById('libroEditorial').textContent = libro.editorial || 'No especificada';
+            document.getElementById('libroIsbn').textContent = libro.isbn || 'N/A';
+
+            // Portada
+            const portada = document.getElementById('libroPortadaImg');
+            portada.src = libro.imagen || 'images/cover-1.jpg';
+            portada.alt = `Portada de ${libro.titulo}`;
+
+            // Disponibilidad
+            const total = typeof libro.copiasTotal === 'number' ? libro.copiasTotal : 1;
+            const disp = typeof libro.copiasDisponibles === 'number' ? libro.copiasDisponibles : (libro.estado === 'Disponible' ? 1 : 0);
+            const isDisponible = disp > 0;
+
+            document.getElementById('libroCopiasTotal').textContent = `${total} Ejemplares`;
+
+            const statusBox = document.getElementById('libroStatusBox');
+            const ribbon = document.getElementById('libroRibbonBadge');
+            const dot = document.getElementById('libroStatusDot');
+            const title = document.getElementById('libroStatusTitle');
+            const subtitle = document.getElementById('libroStatusSubtitle');
+            const copiasBadge = document.getElementById('libroCopiasBadge');
+
+            if (isDisponible) {
+                ribbon.className = "absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-600 text-white shadow-md";
+                ribbon.textContent = "Disponible";
+
+                statusBox.className = "p-4 rounded-xl bg-emerald-50 border border-emerald-200/60 flex items-center justify-between flex-wrap gap-3";
+                dot.className = "w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0";
+                title.className = "text-sm font-bold text-emerald-900";
+                title.textContent = "Disponible para Consulta y Préstamo";
+                subtitle.className = "text-xs text-emerald-800/90";
+                subtitle.textContent = "Puedes solicitar este ejemplar directamente en el mostrador de la biblioteca.";
+
+                copiasBadge.className = "px-3 py-1 rounded-full bg-white text-emerald-800 text-xs font-bold shadow-xs";
+                copiasBadge.textContent = `${disp} de ${total} ejemplares disponibles`;
+            } else {
+                ribbon.className = "absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-rose-600 text-white shadow-md";
+                ribbon.textContent = "Prestado / Agotado";
+
+                statusBox.className = "p-4 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-between flex-wrap gap-3";
+                dot.className = "w-3 h-3 rounded-full bg-amber-500 shrink-0";
+                title.className = "text-sm font-bold text-amber-900";
+                title.textContent = "Ejemplares Actualmente Prestados";
+                subtitle.className = "text-xs text-amber-800/90";
+                subtitle.textContent = "Todos los ejemplares se encuentran en préstamo activo. Consulta en recepción la fecha prevista de devolución.";
+
+                copiasBadge.className = "px-3 py-1 rounded-full bg-white text-amber-800 text-xs font-bold shadow-xs";
+                copiasBadge.textContent = `0 de ${total} copias disponibles`;
+            }
+
+            // Ubicación Física
+            if (libro.ubicacion) {
+                const letraEst = (libro.ubicacion.estanteria || 'Estantería A').replace(/[^a-zA-Z]/g, '').slice(-1) || 'A';
+                document.getElementById('libroCodigoTopografico').textContent = libro.ubicacion.codigo || `Est. ${letraEst} · 01`;
+                document.getElementById('libroEstanteriaText').innerHTML = `Estantería: <strong>${escapeHTML(libro.ubicacion.estanteria || 'Estantería A')}</strong>`;
+                document.getElementById('libroSeccionText').innerHTML = `Sección: <strong>${escapeHTML(libro.ubicacion.seccion || 'General')}</strong>`;
+                document.getElementById('libroNivelText').innerHTML = `Nivel: <strong>${escapeHTML(libro.ubicacion.nivel || 'Nivel 1')}</strong>`;
+                document.getElementById('btnVerEnMapa').href = `mapa.html?estanteria=${encodeURIComponent(letraEst)}`;
+            }
+
+            // Pestañas
+            document.getElementById('libroDescripcion').textContent = libro.descripcion || 'Esta obra no cuenta con una sinopsis detallada registrada actualmente en el catálogo.';
+            document.getElementById('fichaCategoria').textContent = libro.categoria || 'N/A';
+            document.getElementById('fichaIsbn').textContent = libro.isbn || 'N/A';
+            document.getElementById('fichaAnio').textContent = libro.anio || 'N/A';
+            document.getElementById('fichaEditorial').textContent = libro.editorial || 'N/A';
+
+            // Libros Relacionados
+            renderizarRelacionados(libro);
+        }
+
+        function renderizarRelacionados(libroActual) {
+            const grid = document.getElementById('librosRelacionadosGrid');
+            if (!grid) return;
+
+            const todos = obtenerTodosLosLibros();
+            const relacionados = todos
+                .filter(l => l.id !== libroActual.id && l.categoria === libroActual.categoria)
+                .slice(0, 4);
+
+            grid.innerHTML = '';
+            if (relacionados.length === 0) {
+                grid.innerHTML = '<p class="text-xs text-on-surface-variant col-span-full">No hay más libros en esta categoría.</p>';
+                return;
+            }
+
+            relacionados.forEach(rel => {
+                const card = document.createElement('a');
+                card.href = `detalle.html?id=${rel.id}`;
+                card.className = "bg-surface-container-lowest p-2.5 rounded-xl border border-outline-variant/30 hover:border-secondary hover:shadow-md transition-all flex flex-col justify-between";
+                card.innerHTML = `
+                    <div class="w-full aspect-[2/3] rounded-lg overflow-hidden bg-primary-container mb-2">
+                        <img src="${rel.imagen || 'images/cover-1.jpg'}" alt="${escapeHTML(rel.titulo)}" class="w-full h-full object-cover">
+                    </div>
+                    <strong class="text-xs font-bold text-primary-container line-clamp-1">${escapeHTML(rel.titulo)}</strong>
+                    <span class="text-[11px] text-on-surface-variant line-clamp-1">${escapeHTML(rel.autor)}</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function cambiarTab(tab) {
+            const tabs = ['desc', 'ficha', 'normas'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                const content = document.getElementById(`tabContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
+
+                if (t === tab) {
+                    btn.className = "pb-3 font-bold text-sm text-primary-container border-b-2 border-primary-container transition-all";
+                    content.classList.remove('hidden');
+                } else {
+                    btn.className = "pb-3 font-semibold text-sm text-on-surface-variant border-b-2 border-transparent hover:text-primary-container transition-all";
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarFichaLibro();
+            window.addEventListener('datosCargados', cargarFichaLibro);
+        });
+    </script>
+</body>
+</html>

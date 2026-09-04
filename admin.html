@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Panel de Administración - Biblioteca Humboldt</title>
+    <link rel="icon" type="image/png" href="images/logo_bgn.png">
+
+    <!-- Google Fonts & Iconografía Stitch -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        @layer base {
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#040061",
+                        "primary-container": "#0b0b5e",
+                        "on-primary": "#ffffff",
+                        "secondary": "#4647d7",
+                        "secondary-container": "#6062f1",
+                        "secondary-fixed": "#e1e0ff",
+                        "on-secondary-fixed": "#07006c",
+                        "surface": "#f8f9fd",
+                        "surface-dim": "#d9dade",
+                        "surface-bright": "#f8f9fd",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f3f7",
+                        "surface-container": "#edeef2",
+                        "surface-container-high": "#e7e8ec",
+                        "surface-container-highest": "#e1e2e6",
+                        "on-surface": "#191c1f",
+                        "on-surface-variant": "#464651",
+                        "outline": "#777682",
+                        "outline-variant": "#c7c5d2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-surface font-sans text-on-surface antialiased min-h-screen pb-16 md:pb-0">
+
+    <!-- ===== HEADER NAVEGACIÓN ===== -->
+    <header
+        class="fixed top-0 left-0 right-0 z-50 bg-primary-container/90 backdrop-blur-md border-b border-white/10 shadow-[0_4px_20px_rgba(4,0,97,0.3)] transition-all">
+        <div class="h-22 md:h-24 max-w-[1280px] mx-auto px-4 md:px-8 flex items-center justify-between gap-4">
+
+            <!-- Logo Institucional -->
+            <div class="flex items-center gap-4">
+                <a class="flex items-center group focus:outline-none py-1" href="index.html"
+                    title="Inicio - Biblioteca Humboldt">
+                    <img alt="Biblioteca Humboldt"
+                        class="h-14 md:h-16 w-auto object-contain transition-transform group-hover:scale-105 brightness-0 invert"
+                        src="images/logo_bgn.png" />
+                </a>
+            </div>
+
+            <!-- Menú Desktop -->
+            <nav
+                class="hidden md:flex items-center gap-1 p-1 bg-white/10 backdrop-blur-md rounded-full border border-white/15">
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+                    href="index.html">Inicio</a>
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+                    href="catalogo.html">Catálogo</a>
+                <a class="px-5 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+                    href="mapa.html">Mapa</a>
+                <a aria-current="page"
+                    class="px-5 py-2 transition-all bg-white text-primary-container font-bold rounded-full text-sm shadow-md"
+                    href="admin.html">Panel Admin</a>
+            </nav>
+
+            <!-- Botón Salir / Vista Pública -->
+            <div class="flex items-center gap-3" id="headerAdminAction">
+                <a href="catalogo.html"
+                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-white/15 text-white hover:bg-white hover:text-primary-container transition-all border border-white/20">
+                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                    <span>Vista Pública</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full pt-28 bg-surface">
+        <div class="max-w-[1280px] w-full mx-auto px-4 md:px-8 py-8 flex flex-col gap-6">
+
+            <!-- ===== VISTA 1: LOGIN DE ADMINISTRADOR (Si no hay sesión) ===== -->
+            <div id="vistaLoginAdmin" class="flex flex-col items-center justify-center min-h-[60vh] py-12">
+                <div
+                    class="w-full max-w-md bg-surface-container-lowest p-8 rounded-3xl shadow-xl border border-outline-variant/30 flex flex-col gap-5">
+
+                    <div class="flex flex-col items-center text-center">
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-secondary-fixed text-primary flex items-center justify-center mb-3 shadow-sm">
+                            <span class="material-symbols-outlined text-[32px]">shield_person</span>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-primary-container">Acceso Administrativo</h2>
+                        <p class="text-xs text-on-surface-variant mt-1 max-w-xs">Autenticación segura mediante</p>
+                    </div>
+
+                    <form id="formLoginAdmin" class="flex flex-col gap-4">
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Correo
+                                Electrónico (Usuario Supabase):</label>
+                            <input type="email" id="loginAdminEmail" placeholder="admin@humboldt.edu.co" required
+                                class="w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-secondary text-on-surface"
+                                autocomplete="email" />
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1">Contraseña:</label>
+                            <div class="relative">
+                                <input type="password" id="loginAdminPassword"
+                                    placeholder="Tu contraseña de Supabase..." required
+                                    class="w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-secondary text-on-surface pr-10"
+                                    autocomplete="current-password" />
+                                <button type="button" onclick="togglePasswordVisibility()"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary">
+                                    <span class="material-symbols-outlined text-[20px]" id="iconEye">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="loginErrorMsg"
+                            class="hidden p-3 rounded-xl bg-rose-50 text-rose-800 text-xs font-semibold border border-rose-200">
+                            Credenciales incorrectas en Supabase.
+                        </div>
+
+                        <button type="submit" id="btnSubmitLoginAdmin"
+                            class="w-full py-3.5 bg-primary-container hover:bg-secondary text-white font-bold text-sm rounded-full transition-all shadow-md mt-2 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">lock_open</span>
+                            <span>Iniciar Sesión con Supabase</span>
+                        </button>
+                    </form>
+
+                    <a href="catalogo.html" class="text-center text-xs font-semibold text-secondary hover:underline">
+                        Volver al Catálogo Público
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===== VISTA 2: DASHBOARD ADMINISTRATIVO COMPLETO (Si está autenticado) ===== -->
+            <div id="vistaDashboardAdmin" class="hidden flex flex-col gap-6">
+
+                <!-- Encabezado & Estado de Supabase -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>SISTEMA BIBLIOTECA 2026</span>
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-primary-container tracking-tight">Panel de
+                            Administración</h1>
+                        <p class="text-sm text-on-surface-variant mt-1">Gestión de inventario bibliográfico, control de
+                            préstamos y sincronización en la nube.</p>
+                    </div>
+
+                    <!-- Badge de Estado Supabase -->
+                    <div
+                        class="flex items-center gap-3 bg-surface-container-lowest px-4 py-2 rounded-2xl border border-outline-variant/30 shadow-sm">
+                        <div class="flex items-center gap-2 text-xs font-semibold" id="adminSupabaseStatus">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Conectado a la nube</span>
+                        </div>
+                        <button onclick="sincronizarLoteConSupabase()"
+                            class="p-1 rounded-full hover:bg-surface-container text-secondary"
+                            title="Sincronizar ahora">
+                            <span class="material-symbols-outlined text-[20px]">sync</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjetas KPI Estadísticas Reales -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+                    <div
+                        class="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-2xl md:text-3xl font-extrabold text-primary-container"
+                                id="kpiTotalTitulos">18</span>
+                            <span class="text-xs text-on-surface-variant block font-semibold uppercase mt-0.5">Títulos
+                                Registrados</span>
+                        </div>
+                        <div
+                            class="w-12 h-12 rounded-xl bg-secondary-fixed/50 text-secondary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[24px]">menu_book</span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-2xl md:text-3xl font-extrabold text-emerald-700"
+                                id="kpiPorcentajeDisp">75%</span>
+                            <span
+                                class="text-xs text-on-surface-variant block font-semibold uppercase mt-0.5">Disponibilidad
+                                en Sala</span>
+                        </div>
+                        <div
+                            class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[24px]">check_circle</span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-2xl md:text-3xl font-extrabold text-amber-700"
+                                id="kpiPrestadosActivos">8</span>
+                            <span class="text-xs text-on-surface-variant block font-semibold uppercase mt-0.5">Préstamos
+                                Activos</span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[24px]">assignment_return</span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-2xl md:text-3xl font-extrabold text-primary-container"
+                                id="kpiTotalCopias">52</span>
+                            <span class="text-xs text-on-surface-variant block font-semibold uppercase mt-0.5">Total de
+                                Ejemplares</span>
+                        </div>
+                        <div
+                            class="w-12 h-12 rounded-xl bg-surface-container-high text-primary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[24px]">inventory</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Barra de Acciones y Herramientas (Gris Mate Claro) -->
+                <div
+                    class="bg-white border border-slate-300/80 p-5 rounded-2xl shadow-sm text-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-slate-200/80 text-slate-700 flex items-center justify-center shrink-0 shadow-xs">
+                            <span class="material-symbols-outlined text-[24px]">tune</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900">Gestión de Inventario Bibliográfico</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Agrega nuevos libros, ajusta copias o sincroniza el
+                                catálogo.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="abrirModalNuevoLibro()"
+                            class="px-5 py-2.5 rounded-full bg-primary-container text-white font-bold text-xs hover:bg-secondary transition-all shadow-sm flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                            <span>Nuevo Libro</span>
+                        </button>
+                        <button onclick="sincronizarLoteConSupabase()"
+                            class="px-4 py-2.5 rounded-full bg-white text-slate-700 border border-slate-300 font-semibold text-xs hover:bg-slate-50 transition-all flex items-center gap-1.5 shadow-xs">
+                            <span class="material-symbols-outlined text-[16px]">cloud_upload</span>
+                            <span>Subir a Nube</span>
+                        </button>
+                        <button onclick="restablecerCatalogoInicial()"
+                            class="px-4 py-2.5 rounded-full bg-white text-slate-700 border border-slate-300 font-semibold text-xs hover:bg-slate-50 transition-all flex items-center gap-1.5 shadow-xs"
+                            title="Restaurar los 18 originales">
+                            <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                            <span>Restablecer</span>
+                        </button>
+                        <button onclick="cerrarSesionAdmin()"
+                            class="px-4 py-2.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold text-xs hover:bg-rose-100 transition-all flex items-center gap-1.5 shadow-xs">
+                            <span class="material-symbols-outlined text-[16px]">logout</span>
+                            <span>Salir</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Buscador de Inventario Rápido -->
+                <div
+                    class="bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center gap-3">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+                    <input type="text" id="adminSearchInput"
+                        placeholder="Filtrar por título, autor, categoría o ISBN..."
+                        class="w-full bg-transparent text-sm text-on-surface focus:outline-none" />
+                </div>
+
+                <!-- Tabla de Inventario de Libros -->
+                <div
+                    class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="bg-slate-100/90 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-600">
+                                    <th class="py-3.5 px-4">Libro</th>
+                                    <th class="py-3.5 px-4">Categoría</th>
+                                    <th class="py-3.5 px-4">Ubicación</th>
+                                    <th class="py-3.5 px-4 text-center">Copias (Disp / Tot)</th>
+                                    <th class="py-3.5 px-4 text-center">Préstamo Rápido</th>
+                                    <th class="py-3.5 px-4 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaInventarioBody" class="divide-y divide-outline-variant/20 text-xs">
+                                <!-- Filas inyectadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===== MODAL: AGREGAR / EDITAR LIBRO ===== -->
+    <div id="modalFormLibro"
+        class="hidden fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="w-full max-w-2xl bg-surface-container-lowest rounded-3xl shadow-2xl border border-outline-variant/40 p-6 md:p-8 max-h-[90vh] overflow-y-auto">
+
+            <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-secondary-fixed text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]" id="modalFormIcon">auto_stories</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-primary-container" id="modalFormTitulo">Agregar Nuevo Libro
+                        </h3>
+                        <p class="text-xs text-on-surface-variant">Registra o actualiza la información en la base de
+                            datos.</p>
+                    </div>
+                </div>
+                <button onclick="cerrarModalFormLibro()"
+                    class="p-2 rounded-full hover:bg-surface-container text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            <form id="formLibroDatos" class="flex flex-col gap-4">
+                <input type="hidden" id="formLibroId" />
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Título del Libro
+                            *</label>
+                        <input type="text" id="formTitulo" required placeholder="Ej. Cien años de soledad"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Autor *</label>
+                        <input type="text" id="formAutor" required placeholder="Ej. Gabriel García Márquez"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Categoría
+                            *</label>
+                        <select id="formCategoria" required
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary">
+                            <option value="Literatura">Literatura</option>
+                            <option value="Ciencias">Ciencias</option>
+                            <option value="Historia">Historia</option>
+                            <option value="Matemáticas">Matemáticas</option>
+                            <option value="Filosofía">Filosofía</option>
+                            <option value="Arte">Arte</option>
+                            <option value="Tecnología">Tecnología</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Editorial</label>
+                        <input type="text" id="formEditorial" placeholder="Ej. Sudamericana"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Año de
+                            Publicación</label>
+                        <input type="number" id="formAnio" placeholder="Ej. 1967"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">ISBN /
+                            Código</label>
+                        <input type="text" id="formIsbn" placeholder="978-0307474728"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Copias Totales
+                            *</label>
+                        <input type="number" id="formCopiasTotal" min="1" max="100" value="3" required
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Copias Disponibles
+                            *</label>
+                        <input type="number" id="formCopiasDisp" min="0" max="100" value="3" required
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                    </div>
+                </div>
+
+                <!-- Ubicación Física -->
+                <div
+                    class="p-4 rounded-xl bg-surface-container-low/60 border border-outline-variant/30 flex flex-col gap-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px]">explore</span> Ubicación Física en Sala
+                    </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-on-surface-variant mb-1">Estantería</label>
+                            <select id="formEstanteria"
+                                class="w-full px-3 py-2 rounded-lg bg-white border border-outline-variant/40 text-xs">
+                                <option value="Estantería A">Estantería A (Literatura)</option>
+                                <option value="Estantería B">Estantería B (Ciencias)</option>
+                                <option value="Estantería C">Estantería C (Historia)</option>
+                                <option value="Estantería D">Estantería D (Matemáticas)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-on-surface-variant mb-1">Sección</label>
+                            <input type="text" id="formSeccion" placeholder="Ej. Clásicos"
+                                class="w-full px-3 py-2 rounded-lg bg-white border border-outline-variant/40 text-xs" />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-on-surface-variant mb-1">Nivel</label>
+                            <input type="text" id="formNivel" placeholder="Ej. Nivel 2"
+                                class="w-full px-3 py-2 rounded-lg bg-white border border-outline-variant/40 text-xs" />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">URL de Portada o
+                        Imagen Local</label>
+                    <input type="text" id="formImagen" placeholder="images/cover-1.jpg o https://..."
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary" />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-on-surface-variant mb-1">Sinopsis /
+                        Descripción</label>
+                    <textarea id="formDescripcion" rows="3" placeholder="Resumen de la obra..."
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-outline-variant/20">
+                    <button type="button" onclick="cerrarModalFormLibro()"
+                        class="px-5 py-2.5 rounded-full text-xs font-bold text-on-surface-variant hover:bg-surface-container">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-full bg-primary-container hover:bg-secondary text-white text-xs font-bold shadow-md transition-all">
+                        Guardar Libro
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- ===== MODAL: CONFIRMAR ELIMINACIÓN ===== -->
+    <div id="modalConfirmarEliminar"
+        class="hidden fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="w-full max-w-md bg-surface-container-lowest rounded-3xl shadow-2xl border border-outline-variant/40 p-6 text-center flex flex-col items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[28px]">delete_forever</span>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-primary-container">¿Eliminar este libro?</h3>
+                <p class="text-xs text-on-surface-variant mt-1" id="modalEliminarNombre">Esta acción no se puede
+                    deshacer.</p>
+            </div>
+            <div class="flex items-center gap-3 w-full justify-center mt-2">
+                <button onclick="cerrarModalEliminar()"
+                    class="px-5 py-2.5 rounded-full text-xs font-bold text-on-surface-variant hover:bg-surface-container flex-1">
+                    Cancelar
+                </button>
+                <button id="btnEjecutarEliminacion"
+                    class="px-5 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md flex-1">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="w-full bg-primary text-white py-8 px-4 md:px-8 mt-12">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <img src="images/logo_bgn.png" alt="Biblioteca Humboldt"
+                    class="h-8 w-auto brightness-0 invert opacity-90" />
+                <span class="text-xs text-white/80">© 2026 Biblioteca Humboldt · Colegio Humboldt de Sogamoso.</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-white/80">
+                <a href="index.html" class="hover:text-white">Inicio</a>
+                <a href="catalogo.html" class="hover:text-white">Catálogo</a>
+                <a href="mapa.html" class="hover:text-white">Mapa</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== BOTTOM NAV (MÓVIL RESPONSIVE) ===== -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/40 flex items-center justify-around z-50 shadow-lg">
+        <a href="index.html"
+            class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">home</span>
+            <span>Inicio</span>
+        </a>
+        <a href="catalogo.html"
+            class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">menu_book</span>
+            <span>Catálogo</span>
+        </a>
+        <a href="mapa.html"
+            class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary text-[11px]">
+            <span class="material-symbols-outlined text-[22px]">explore</span>
+            <span>Mapa</span>
+        </a>
+        <a href="admin.html" class="flex flex-col items-center gap-1 text-primary font-bold text-[11px]">
+            <span class="material-symbols-outlined text-[22px]"
+                style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+            <span>Admin</span>
+        </a>
+    </nav>
+
+    <!-- Supabase CDN Client & Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.config.js"></script>
+    <script src="app-core.js"></script>
+
+    <script>
+        let libroIdAEliminar = null;
+
+        function verificarVistaAdmin() {
+            const esAdmin = verificarSesionAdmin();
+            const vistaLogin = document.getElementById('vistaLoginAdmin');
+            const vistaDashboard = document.getElementById('vistaDashboardAdmin');
+
+            if (esAdmin) {
+                vistaLogin.classList.add('hidden');
+                vistaDashboard.classList.remove('hidden');
+                actualizarDashboard();
+            } else {
+                vistaLogin.classList.remove('hidden');
+                vistaDashboard.classList.add('hidden');
+            }
+        }
+
+        function actualizarDashboard() {
+            const stats = obtenerEstadisticasCatalogo();
+            document.getElementById('kpiTotalTitulos').textContent = stats.totalLibros;
+            document.getElementById('kpiPorcentajeDisp').textContent = `${stats.porcentajeDisponibles}%`;
+            document.getElementById('kpiPrestadosActivos').textContent = stats.copiasPrestadas;
+            document.getElementById('kpiTotalCopias').textContent = stats.totalCopias;
+
+            renderizarTablaInventario();
+        }
+
+        function renderizarTablaInventario() {
+            const tbody = document.getElementById('tablaInventarioBody');
+            const query = (document.getElementById('adminSearchInput').value || '').toLowerCase().trim();
+            const libros = obtenerTodosLosLibros();
+
+            const filtrados = libros.filter(l => {
+                return !query ||
+                    (l.titulo && l.titulo.toLowerCase().includes(query)) ||
+                    (l.autor && l.autor.toLowerCase().includes(query)) ||
+                    (l.categoria && l.categoria.toLowerCase().includes(query)) ||
+                    (l.isbn && l.isbn.includes(query));
+            });
+
+            tbody.innerHTML = '';
+
+            if (filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">No se encontraron libros.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(libro => {
+                const total = typeof libro.copiasTotal === 'number' ? libro.copiasTotal : 1;
+                const disp = typeof libro.copiasDisponibles === 'number' ? libro.copiasDisponibles : (libro.estado === 'Disponible' ? 1 : 0);
+                const isDisponible = disp > 0;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-surface-container-low transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-3">
+                            <img src="${libro.imagen || 'images/cover-1.jpg'}" alt="${escapeHTML(libro.titulo)}" class="w-10 aspect-[2/3] object-cover rounded shadow-xs shrink-0" onerror="this.src='images/cover-1.jpg'">
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-bold text-primary-container truncate">${escapeHTML(libro.titulo)}</span>
+                                <span class="text-[11px] text-on-surface-variant truncate">${escapeHTML(libro.autor)}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary-container text-[11px] font-semibold">${escapeHTML(libro.categoria)}</span>
+                    </td>
+                    <td class="py-3 px-4 text-on-surface-variant font-mono text-[11px]">
+                        ${libro.ubicacion ? `${escapeHTML(libro.ubicacion.estanteria)} (${escapeHTML(libro.ubicacion.nivel)})` : 'Sala'}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="font-bold ${isDisponible ? 'text-emerald-700' : 'text-rose-700'}">${disp}</span>
+                        <span class="text-on-surface-variant">/ ${total}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="inline-flex items-center gap-1 bg-surface-container p-1 rounded-lg">
+                            <button onclick="ejecutarPrestarCopia(${libro.id})" ${disp <= 0 ? 'disabled' : ''} class="px-2 py-1 bg-white hover:bg-amber-100 text-amber-900 rounded font-bold text-[10px] disabled:opacity-40 transition-colors" title="Prestar copia">
+                                -1 Prestar
+                            </button>
+                            <button onclick="ejecutarDevolverCopia(${libro.id})" ${disp >= total ? 'disabled' : ''} class="px-2 py-1 bg-white hover:bg-emerald-100 text-emerald-900 rounded font-bold text-[10px] disabled:opacity-40 transition-colors" title="Devolver copia">
+                                +1 Devolver
+                            </button>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button onclick="abrirModalEditarLibro(${libro.id})" class="p-1.5 rounded-lg bg-surface-container-high text-primary hover:bg-secondary-fixed transition-colors" title="Editar">
+                                <span class="material-symbols-outlined text-[16px]">edit</span>
+                            </button>
+                            <button onclick="abrirModalEliminar(${libro.id}, '${escapeHTML(libro.titulo)}')" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors" title="Eliminar">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function ejecutarPrestarCopia(id) {
+            await prestarCopiaLibro(id);
+            actualizarDashboard();
+        }
+
+        async function ejecutarDevolverCopia(id) {
+            await devolverCopiaLibro(id);
+            actualizarDashboard();
+        }
+
+        // Modales y Formulario
+        function abrirModalNuevoLibro() {
+            document.getElementById('formLibroId').value = '';
+            document.getElementById('formTitulo').value = '';
+            document.getElementById('formAutor').value = '';
+            document.getElementById('formCategoria').value = 'Literatura';
+            document.getElementById('formEditorial').value = '';
+            document.getElementById('formAnio').value = new Date().getFullYear();
+            document.getElementById('formIsbn').value = '';
+            document.getElementById('formCopiasTotal').value = 3;
+            document.getElementById('formCopiasDisp').value = 3;
+            document.getElementById('formEstanteria').value = 'Estantería A';
+            document.getElementById('formSeccion').value = 'General';
+            document.getElementById('formNivel').value = 'Nivel 1';
+            document.getElementById('formImagen').value = '';
+            document.getElementById('formDescripcion').value = '';
+
+            document.getElementById('modalFormTitulo').textContent = 'Agregar Nuevo Libro';
+            document.getElementById('modalFormLibro').classList.remove('hidden');
+        }
+
+        function abrirModalEditarLibro(id) {
+            const libro = obtenerLibroPorId(id);
+            if (!libro) return;
+
+            document.getElementById('formLibroId').value = libro.id;
+            document.getElementById('formTitulo').value = libro.titulo || '';
+            document.getElementById('formAutor').value = libro.autor || '';
+            document.getElementById('formCategoria').value = libro.categoria || 'Literatura';
+            document.getElementById('formEditorial').value = libro.editorial || '';
+            document.getElementById('formAnio').value = libro.anio || '';
+            document.getElementById('formIsbn').value = libro.isbn || '';
+            document.getElementById('formCopiasTotal').value = libro.copiasTotal || 1;
+            document.getElementById('formCopiasDisp').value = libro.copiasDisponibles || 0;
+            document.getElementById('formEstanteria').value = libro.ubicacion ? (libro.ubicacion.estanteria || 'Estantería A') : 'Estantería A';
+            document.getElementById('formSeccion').value = libro.ubicacion ? (libro.ubicacion.seccion || 'General') : 'General';
+            document.getElementById('formNivel').value = libro.ubicacion ? (libro.ubicacion.nivel || 'Nivel 1') : 'Nivel 1';
+            document.getElementById('formImagen').value = libro.imagen || '';
+            document.getElementById('formDescripcion').value = libro.descripcion || '';
+
+            document.getElementById('modalFormTitulo').textContent = `Editar: ${libro.titulo}`;
+            document.getElementById('modalFormLibro').classList.remove('hidden');
+        }
+
+        function cerrarModalFormLibro() {
+            document.getElementById('modalFormLibro').classList.add('hidden');
+        }
+
+        function abrirModalEliminar(id, titulo) {
+            libroIdAEliminar = id;
+            document.getElementById('modalEliminarNombre').textContent = `¿Seguro que deseas eliminar "${titulo}" del catálogo?`;
+            document.getElementById('modalConfirmarEliminar').classList.remove('hidden');
+        }
+
+        function cerrarModalEliminar() {
+            libroIdAEliminar = null;
+            document.getElementById('modalConfirmarEliminar').classList.add('hidden');
+        }
+
+        function togglePasswordVisibility() {
+            const pwd = document.getElementById('loginAdminPassword');
+            const icon = document.getElementById('iconEye');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                pwd.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarVistaAdmin();
+
+            // Login Admin
+            const formLogin = document.getElementById('formLoginAdmin');
+            const btnSubmit = document.getElementById('btnSubmitLoginAdmin');
+            const errorBox = document.getElementById('loginErrorMsg');
+
+            if (formLogin) {
+                formLogin.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('loginAdminEmail').value.trim();
+                    const pass = document.getElementById('loginAdminPassword').value.trim();
+
+                    if (btnSubmit) {
+                        btnSubmit.disabled = true;
+                        btnSubmit.innerHTML = '<span class="material-symbols-outlined text-[18px]">progress_activity</span><span>Verificando...</span>';
+                    }
+                    if (errorBox) errorBox.classList.add('hidden');
+
+                    try {
+                        const res = await iniciarSesionAdmin(email, pass);
+                        if (res && res.success) {
+                            verificarVistaAdmin();
+                        } else {
+                            if (errorBox) {
+                                errorBox.textContent = res && res.message ? res.message : 'Credenciales incorrectas.';
+                                errorBox.classList.remove('hidden');
+                            }
+                        }
+                    } catch (err) {
+                        if (errorBox) {
+                            errorBox.textContent = 'Error: ' + (err.message || err);
+                            errorBox.classList.remove('hidden');
+                        }
+                    } finally {
+                        if (btnSubmit) {
+                            btnSubmit.disabled = false;
+                            btnSubmit.innerHTML = '<span class="material-symbols-outlined text-[18px]">login</span><span>Ingresar al Panel de Administración</span>';
+                        }
+                    }
+                });
+            }
+
+            // Guardar Libro
+            const formLibro = document.getElementById('formLibroDatos');
+            if (formLibro) {
+                formLibro.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const id = document.getElementById('formLibroId').value;
+                    const tot = parseInt(document.getElementById('formCopiasTotal').value, 10) || 1;
+                    const disp = parseInt(document.getElementById('formCopiasDisp').value, 10) || 0;
+
+                    const datos = {
+                        titulo: document.getElementById('formTitulo').value.trim(),
+                        autor: document.getElementById('formAutor').value.trim(),
+                        categoria: document.getElementById('formCategoria').value,
+                        editorial: document.getElementById('formEditorial').value.trim(),
+                        anio: parseInt(document.getElementById('formAnio').value, 10) || null,
+                        isbn: document.getElementById('formIsbn').value.trim(),
+                        copiasTotal: tot,
+                        copiasDisponibles: Math.min(disp, tot),
+                        imagen: document.getElementById('formImagen').value.trim() || 'images/cover-1.jpg',
+                        descripcion: document.getElementById('formDescripcion').value.trim(),
+                        ubicacion: {
+                            estanteria: document.getElementById('formEstanteria').value,
+                            seccion: document.getElementById('formSeccion').value.trim() || 'General',
+                            nivel: document.getElementById('formNivel').value.trim() || 'Nivel 1'
+                        }
+                    };
+
+                    if (id) {
+                        await actualizarLibroExistente(id, datos);
+                    } else {
+                        await guardarNuevoLibro(datos);
+                    }
+
+                    cerrarModalFormLibro();
+                    actualizarDashboard();
+                });
+            }
+
+            // Confirmar Eliminación
+            document.getElementById('btnEjecutarEliminacion').addEventListener('click', async () => {
+                if (libroIdAEliminar) {
+                    await eliminarLibroPorId(libroIdAEliminar);
+                    cerrarModalEliminar();
+                    actualizarDashboard();
+                }
+            });
+
+            // Buscador de inventario
+            document.getElementById('adminSearchInput').addEventListener('input', renderizarTablaInventario);
+
+            window.addEventListener('datosCargados', actualizarDashboard);
+            window.addEventListener('catalogoModificado', actualizarDashboard);
+        });
+    </script>
+</body>
+
+</html>
